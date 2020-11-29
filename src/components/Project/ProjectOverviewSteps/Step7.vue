@@ -10,7 +10,7 @@
         :type="project.open ? 'danger' : 'primary'"
         class="ml-16"
         :icon="project.open ? 'el-icon-document-checked' : 'el-icon-check'"
-        @click="update(true)"
+        @click="update(project.open ? 'finish' : 'open')"
       >
         {{ project.open ? 'Encerrar' : 'Iniciar' }}
       </el-button>
@@ -104,8 +104,11 @@ export default {
     update (action) {
       this.$store.commit('SHOW_LOADING')
       const project = JSON.parse(JSON.stringify(this.project))
-      if (action) {
-        project.open = !project.open
+      if (action === 'open') {
+        project.open = true
+      } else if (action === 'finish') {
+        project.open = false
+        project.finished = true
       }
       this.$store.dispatch('updateProject', project)
         .catch(err => this.$throwError(err))
@@ -130,7 +133,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@/styles/_colors.scss';
+@import '@/plugins/element/_colors.scss';
 
 .project-step-7 {
   .el-alert__title {

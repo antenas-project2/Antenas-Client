@@ -9,7 +9,7 @@
               <el-steps
                 :active="project.progress - 1"
                 finish-status="success"
-                :process-status="project.progress == 9 ? 'success' : project.refused ? 'error' : 'finish'"
+                :process-status="project.progress == 8 ? 'success' : project.refused ? 'error' : 'finish'"
                 align-center
               >
                 <el-step v-for="(step, index) in steps" :key="index" :title="step" />
@@ -138,7 +138,7 @@ export default {
         'Reunião',
         'Designar professor',
         'Entrega',
-        'Avaliação dos alunos',
+        // 'Avaliação dos Alunos',
         'Finalizado'
       ]
     }
@@ -191,10 +191,10 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@/styles/_colors.scss';
+@import '@/plugins/element/_colors.scss';
 
 .project-overview {
-  max-height: calc(100vh - 96px);
+  max-height: calc(100vh - 100px);
   .title {
     font-size: 1.8rem;
   }

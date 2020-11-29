@@ -18,8 +18,7 @@ const state = {
     5: 'Reunião',
     6: 'Designar professor',
     7: 'Entrega',
-    8: 'Avaliação dos alunos',
-    9: 'Finalizado'
+    8: 'Finalizado'
   }
 }
 

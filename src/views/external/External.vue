@@ -83,7 +83,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/_colors.scss';
+@import '@/plugins/element/_colors.scss';
 
 .external-view {
   .content {

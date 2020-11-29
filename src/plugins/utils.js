@@ -56,7 +56,7 @@ Utils.install = function (Vue, options) {
     } else if (store.getters.isCadi) {
       isPending = [2, 4, 6].includes(project.progress) || (isMeetingPhase && !project.meeting.address.zipCode)
     } else if (store.getters.isTeacher) {
-      isPending = (project.progress === 7 && !project.open) || (project.open === false && project.progress === 8)
+      isPending = project.progress === 7 && !project.open
     } else if (store.getters.isStudent) {
       isPending = project.progress === 7 && project.open
     }

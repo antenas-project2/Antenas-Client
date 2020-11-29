@@ -39,7 +39,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@/styles/_colors.scss';
+@import '@/plugins/element/_colors.scss';
 
 .project-card {
   position: relative;
