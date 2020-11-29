@@ -72,6 +72,13 @@ export default {
       })
   },
 
+  getProfileInfo (id) {
+    return http
+      .get(`student/profile-info/${id}`).then(res => {
+        return res.data
+      })
+  },
+
   updateUser (user) {
     return http
       .put(`${store.getters.userRole}/update`, user).then(res => res.data)
