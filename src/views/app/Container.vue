@@ -24,6 +24,10 @@
           <el-dropdown @command="dropdownClick">
             <i class="menu el-icon-more" />
             <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="projects">
+                <i class="el-icon-document" />
+                Projetos
+              </el-dropdown-item>
               <el-dropdown-item command="account">
                 <i class="el-icon-user" />
                 Dados da conta
@@ -32,11 +36,7 @@
                 <i class="el-icon-s-custom" />
                 Perfil
               </el-dropdown-item>
-              <el-dropdown-item command="projects">
-                <i class="el-icon-document" />
-                Projetos
-              </el-dropdown-item>
-              <el-dropdown-item command="medals">
+              <el-dropdown-item v-if="$store.getters.isTeacher" command="medals">
                 <i class="el-icon-medal" />
                 Medalhas
               </el-dropdown-item>
@@ -79,7 +79,8 @@ export default {
   mounted () {
     Promise.all([
       this.$store.dispatch('loadCurrentUserInfo'),
-      this.$store.dispatch('loadProjects')
+      this.$store.dispatch('loadProjects'),
+      this.$store.dispatch('loadMedals')
     ])
       .catch(err => this.$throwError(err))
       .finally(() => { this.completeLoading = true })
@@ -94,6 +95,8 @@ export default {
         this.$router.push('/')
       } else if (action === 'projects') {
         this.$router.push('/projects')
+      } else if (action === 'medals') {
+        this.$router.push('/medals')
       } else if (action === 'profile') {
         this.$router.push(`/${this.$store.getters.userName.replace(' ', '.').replace(' ', '')}-${this.$store.getters.userId}`)
       }

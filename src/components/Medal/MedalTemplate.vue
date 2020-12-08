@@ -2,7 +2,7 @@
   <el-tooltip placement="top">
     <div slot="content">{{ medal.description }}<br> Criada dia {{ medal.creationDate | moment("DD/MM/YYYY") }} </div>
     <div class="medal-template">
-      <div :style="`background: linear-gradient(135deg, #fff 0%, #${color} 50%, #fff 100%);`" class="wrap">
+      <div :style="`background: linear-gradient(135deg, #fff 0%, ${color} 50%, #fff 100%);`" class="wrap">
         <div class="title">
           <span
             v-for="(char, index) in name.split('')"
@@ -34,7 +34,7 @@ export default {
       return this.medal.name.toUpperCase()
     },
     color () {
-      return this.medal.color || '4472E9'
+      return this.medal.color ? this.medal.color : '#4472E9'
     },
     anglePerChar () {
       return (16 * this.name.length) / this.name.length
@@ -54,6 +54,7 @@ export default {
   display: inline-block;
   margin: 6px 6px 40px;
   max-width: 124px;
+  text-align: left;
   .wrap {
     width: 118px;
     height: 118px;

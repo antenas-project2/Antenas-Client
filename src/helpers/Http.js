@@ -2,6 +2,7 @@ import axios from 'axios'
 import store from '../store/index'
 
 // const isProduction = process.env.NODE_ENV === 'production';
+
 const baseUrl = 'http://localhost:8080'
 // const baseUrl = 'http://10.0.0.105:8080'
 // const baseUrl = 'https://antenas-service-new.herokuapp.com'
