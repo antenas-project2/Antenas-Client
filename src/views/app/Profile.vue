@@ -3,7 +3,8 @@
     <div class="personal-info">
       <el-row>
         <el-col :span="3">
-          <img class="image" :src="user.photo" alt="Flowers in Chania">
+          <img v-if="user.photo !== null" class="image" :src="user.photo" alt="Foto de perfil">
+          <i v-else class="el-icon-user-solid" alt="Foto de perfil" />
         </el-col>
         <el-col :span="16">
           <span class="student-name">{{ user.name }}</span>
@@ -27,7 +28,7 @@
         </el-col>
       </el-row>
     </div>
-    <el-row>
+    <el-row class="mt-20">
       <el-col :span="11" class="mr-40 border-right">
         <el-tabs class="mr-40">
           <el-tab-pane label="Informaçôes Profissionais" class="info">
@@ -44,6 +45,9 @@
                 {{ professionalInfo.activitiesPerformed }}
               </div>
             </div>
+            <div v-if="user.professionalInfos.length !== undefined">
+              Não há informações cadastradas
+            </div>
           </el-tab-pane>
           <el-tab-pane label="Informações Acadêmicas" class="info">
             <div v-for="academicInfo in user.academicInfos" :key="academicInfo.id" class="info-item">
@@ -58,12 +62,15 @@
                 </div>
               </div>
             </div>
+            <div v-if="user.academicInfos !== undefined">
+              Não há informações cadastradas
+            </div>
           </el-tab-pane>
         </el-tabs>
       </el-col>
       <br>
       <el-col :span="12">
-        <h3> Medalhas ({{ user.medals.length }})</h3>
+        <h3 v-if="user.medals"> Medalhas ({{ user.medals.length }})</h3>
         <div class="info medal-flex-box">
           <div v-for="medal in user.medals" :key="medal.id" class="medal">
             <medal-template :medal="medal" />
@@ -75,7 +82,7 @@
       <br>
       <span>Projetos ({{ user.completedProjects }})</span>
       <br><br>
-      <el-row :gutter="40">
+      <el-row v-if="user.studentTeam.length > 0" :gutter="40">
         <el-col :span="4" class="project-list">
           <div v-for="studentTeam in user.studentTeam" :key="studentTeam.team.project.title" class="project" @click="currentProject = studentTeam">
             {{ studentTeam.team.project.title }}
@@ -84,25 +91,29 @@
             </div>
           </div>
         </el-col>
-        <el-col :span="10">
-          <div v-if="currentProject">
-            <h3> {{ currentProject.team.project.title }} </h3>
+        <el-col v-if="currentProject" :span="9" class="project-info">
+          <div>
+            <div class="project-title"> {{ currentProject.team.project.title }} </div>
             <div>
-              <strong> Resumo: </strong> {{ currentProject.team.project.shortDescription }}
-              <br>
-              <strong> Descrição completa: </strong> {{ currentProject.team.project.completeDescription }}
-              <br>
-              <strong> Descrição da tecnologia: </strong> {{ currentProject.team.project.technologyDescription }}
+              <div class="project-detail"> <span class="project-detail-title"> Resumo: </span>{{ currentProject.team.project.shortDescription }} </div>
+              <div class="project-detail"> <span class="project-detail-title"> Descrição completa: </span> {{ currentProject.team.project.completeDescription }} </div>
+              <div class="project-detail"> <span class="project-detail-title"> Descrição da tecnologia: </span> {{ currentProject.team.project.technologyDescription }} </div>
             </div>
           </div>
         </el-col>
-        <el-col v-if="!currentProject" :span="10">
+        <el-col v-if="!currentProject" :span="9">
           <highcharts :options="getChartOptionsAverage()" />
         </el-col>
-        <el-col :span="10">
+        <el-col :span="9">
           <highcharts :options="getChartOptions()" />
         </el-col>
+        <el-col v-if="currentProject" :span="1">
+          <i class="el-icon-close" @click="deselect()" />
+        </el-col>
       </el-row>
+      <div v-else>
+        Não há projetos cadastrados.
+      </div>
     </div>
   </el-card>
 </template>
@@ -132,7 +143,6 @@ export default {
     UserService.getProfileInfo(this.$route.params.userId)
       .then((res) => {
         this.user = res
-        console.log(this.user)
       })
       .catch(err => this.$throwError(err))
       .finally(() => this.$store.commit('HIDE_LOADING'))
@@ -140,7 +150,7 @@ export default {
   methods: {
     getChartOptions () {
       return {
-        series: this.getSeries(this.currentProject ? this.currentProject : this.user.studentTeam[0]),
+        series: this.getSeries(this.currentProject ? this.currentProject : this.user.studentTeam ? this.user.studentTeam[0] : []),
         chart: {
           polar: true,
           type: 'line'
@@ -184,20 +194,29 @@ export default {
       }
     },
     getSeriesAverage () {
+      if (this.user.average) {
+        return [{
+          name: 'Avaliação do professor',
+          data: [
+            this.user.average.proactivity,
+            this.user.average.autonomy,
+            this.user.average.collaboration,
+            this.user.average.resultsDeliver
+          ],
+          pointPlacement: 'on'
+        }]
+      }
       return [{
-        name: 'Avaliação do professor',
+        name: 'Não há avaliação',
         data: [
-          this.user.average.proactivity,
-          this.user.average.autonomy,
-          this.user.average.collaboration,
-          this.user.average.resultsDeliver
+          0, 0, 0, 0
         ],
         pointPlacement: 'on'
       }]
     },
     getSeries (project) {
       const series = []
-      if (project.evaluation) {
+      if (project && project.evaluation) {
         series.push({
           name: 'Avaliação do professor',
           data: [
@@ -210,6 +229,9 @@ export default {
         })
       }
       return series
+    },
+    deselect () {
+      this.currentProject = null
     }
   }
 }
@@ -247,6 +269,7 @@ export default {
   .medal {
     transform: scale(0.5);
     width: 76px;
+    height: 0px;
   }
   .info-title {
     margin-bottom: 10px;
@@ -278,6 +301,7 @@ export default {
   .medal-flex-box {
     display: flex;
     flex-wrap: wrap;
+    margin-top: 18px;
   }
   .student-name {
     font-size: 20px;
@@ -297,11 +321,35 @@ export default {
   }
   .project-list {
     height: 386px;
-    max-height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
     position: relative;
     max-height: 386PX;
+  }
+  .el-icon-close {
+    cursor: pointer;
+  }
+  .el-icon-user-solid {
+    font-size: 134px;
+  }
+  .project-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  .project-detail-title {
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .project-detail {
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  .project-info {
+    height: 380px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 380PX;
   }
 }
 
