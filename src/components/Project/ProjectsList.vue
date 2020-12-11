@@ -110,7 +110,7 @@ export default {
     }
   },
   mounted () {
-    this.projectsAvailableFilters = this.availableFilters.filter(status => {
+    this.filterStatus = this.availableFilters.filter(status => {
       return status !== 'Concluído' && status !== 'Recusado'
     })
 
