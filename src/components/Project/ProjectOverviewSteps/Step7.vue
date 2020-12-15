@@ -130,8 +130,6 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@/styles/_colors.scss';
-
 .project-step-7 {
 }
 </style>
