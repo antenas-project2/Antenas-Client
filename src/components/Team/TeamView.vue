@@ -28,9 +28,9 @@
               :type="member.type"
               class="team-member member-view"
             >
-              <div class="student-flex-box" @click="openStudentProfile(member.student)">
+              <div class="student-flex-box">
                 <div>
-                  <div class="member-name">{{ member.student.name }}</div>
+                  <div class="member-name" @click="openStudentProfile(member.student)">{{ member.student.name }}</div>
                   <div class="role-view">{{ formatStudentRoles(member) }}</div>
                 </div>
                 <div v-if="canEdit" class="overlay">

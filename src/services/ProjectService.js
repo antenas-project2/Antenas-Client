@@ -13,7 +13,6 @@ export default {
   },
 
   updateProject (project) {
-    console.log('update')
     return http.put('/project', project)
       .then(res => res.data)
   },

@@ -73,7 +73,7 @@
           <el-button
             type="primary"
             class="ml-16"
-            @click="update(undefined)"
+            @click="update(false)"
           >
             Salvar
           </el-button>
@@ -98,9 +98,12 @@ export default {
     })
   },
   methods: {
-    update () {
+    update (openProject) {
       this.$store.commit('SHOW_LOADING')
       const project = JSON.parse(JSON.stringify(this.project))
+      if (openProject) {
+        project.open = !project.open
+      }
       this.$store.dispatch('updateProject', project)
         .catch(err => this.$throwError(err))
         .finally(() => this.$store.commit('HIDE_LOADING'))
@@ -118,7 +121,7 @@ export default {
             .catch(err => this.$throwError(err))
             .finally(() => this.$store.commit('HIDE_LOADING'))
         } else {
-          this.update()
+          this.update(true)
         }
       })
     }

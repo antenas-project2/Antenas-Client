@@ -103,14 +103,53 @@
           </el-col>
         </el-row>
       </div>
-      <div v-else>
-        a
+      <div v-else class="evaluation">
+        <div v-for="team in teams" :key="team.id" class="team-info">
+          <span class="team-name"> {{ team.name }} </span>
+          <el-row v-for="studentTeam in team.studentTeamList" :key="studentTeam.id" class="student-evaluation">
+            <el-col :span="24">
+              <el-row :gutter="24">
+                <el-col :span="5" class="student-name">
+                  {{ studentTeam.student.name }}
+                </el-col>
+                <el-col :span="4">
+                  Proatividade
+                  <el-rate
+                    v-model="studentTeam.evaluation.proactivity"
+                    :colors="colors"
+                  />
+                </el-col>
+                <el-col :span="4">
+                  Autonomia
+                  <el-rate
+                    v-model="studentTeam.evaluation.autonomy"
+                    :colors="colors"
+                  />
+                </el-col>
+                <el-col :span="4">
+                  Colaboração
+                  <el-rate
+                    v-model="studentTeam.evaluation.collaboration"
+                    :colors="colors"
+                  />
+                </el-col>
+                <el-col :span="4">
+                  Entrega de resultados
+                  <el-rate
+                    v-model="studentTeam.evaluation.resultsDeliver"
+                    :colors="colors"
+                  />
+                </el-col>
+              </el-row>
+            </el-col>
+          </el-row>
+        </div>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">Cancelar</el-button>
         <el-button v-if="step === 1" icon="el-icon-back" circle @click="step = 0" />
         <el-button v-if="step === 0" icon="el-icon-right" circle @click="step = 1" />
-        <el-button v-if="step === 1" type="primary" @click="dialogVisible = false">Salvar Avaliação</el-button>
+        <el-button v-if="step === 1" type="primary" @click="evaluate()">Salvar Avaliação</el-button>
       </span>
     </el-dialog>
     <MedalNew :visible.sync="newMedalVisible" />
@@ -137,7 +176,9 @@ export default {
       step: 0,
       loading: false,
       searchTerm: '',
-      teams: []
+      teams: [],
+      value: null,
+      colors: ['#99A9BF', '#F7BA2A', '#FF9900']
     }
   },
   computed: {
@@ -195,6 +236,16 @@ export default {
     onDragLeave (ev, id) {
       ev.stopPropagation()
       document.getElementById(id).classList.remove('is-dragging')
+    },
+    evaluate () {
+      this.dialogVisible = false
+      this.$store.commit('SHOW_LOADING')
+      this.teams.forEach(team => {
+        team.project.id = this.selectedProject.id
+      })
+      TeamService.evaluate(this.teams)
+        .catch(err => this.$throwError(err))
+        .finally(() => this.$store.commit('HIDE_LOADING'))
     }
   }
 }
@@ -274,6 +325,33 @@ export default {
         padding: 40px 24px;
       }
     }
+  }
+
+  .student-name {
+    line-height: 30px;
+    font-weight: 500;
+  }
+  .team-name {
+    font-weight: 600;
+    font-size: 20px;
+  }
+  .student-evaluation {
+    border: solid #c3c8d68f 1px;
+    margin: 10px 0px;
+    padding: 10px;
+    border-radius: 10px;
+  }
+  .team-info {
+    border-bottom: solid #c3c8d6 2px;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+  }
+  .evaluation {
+    height: 516px;
+    max-height: 100%;
+    overflow-y: auto;
+    margin-top: 20px;
+    overflow-x: hidden;
   }
 }
 </style>
