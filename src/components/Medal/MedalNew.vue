@@ -3,8 +3,8 @@
     class="medal-new"
     :title="(isNew ? 'Criar nova' : 'Editar') + ' medalha'"
     :visible.sync="dialogVisible"
-    :close-on-click-modal="!loading"
-    :close-on-press-escape="!loading"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
     :show-close="!loading"
     width="40%"
   >

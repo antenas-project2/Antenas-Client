@@ -32,12 +32,20 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="Empresa" prop="company">
-              <el-input v-model="form.company" />
+              <el-input
+                v-model="form.company"
+                maxlength="60"
+                show-word-limit
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="Cargo" prop="role">
-              <el-input v-model="form.role" />
+              <el-input
+                v-model="form.role"
+                maxlength="20"
+                show-word-limit
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -65,7 +73,13 @@
           </el-col>
         </el-row>
         <el-form-item label="Atividades realizadas" prop="activitiesPerformed">
-          <el-input v-model="form.activitiesPerformed" type="textarea" :rows="4" />
+          <el-input
+            v-model="form.activitiesPerformed"
+            type="textarea"
+            :rows="4"
+            maxlength="150"
+            show-word-limit
+          />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -182,6 +196,15 @@ export default {
             end: ''
           }
         })
+
+      this.showDialog = false
+      this.form = {
+        id: null,
+        company: '',
+        activitiesPerformed: '',
+        start: '',
+        end: ''
+      }
     },
     deleteRow (row) {
       this.user.professionalInfos = this.user.professionalInfos.filter(info => {

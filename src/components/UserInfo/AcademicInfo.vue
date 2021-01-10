@@ -17,7 +17,7 @@
       </el-col>
     </el-row>
     <el-dialog
-      title="Cadastrar empresa"
+      title="Cadastrar curso"
       :visible.sync="showDialog"
       :close-on-click-modal="false"
     >
@@ -32,12 +32,20 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="Instituição" prop="institution">
-              <el-input v-model="form.institution" />
+              <el-input
+                v-model="form.institution"
+                maxlength="40"
+                show-word-limit
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="Curso" prop="course">
-              <el-input v-model="form.course" />
+              <el-input
+                v-model="form.course"
+                maxlength="40"
+                show-word-limit
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -165,6 +173,14 @@ export default {
           this.user.academicInfos = []
         }
         this.user.academicInfos.push(this.form)
+        this.showDialog = false
+        this.form = {
+          id: null,
+          institution: '',
+          course: '',
+          start: '',
+          end: ''
+        }
       }
 
       UserService.updateUser(this.user)
