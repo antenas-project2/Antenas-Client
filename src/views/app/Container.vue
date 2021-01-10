@@ -36,10 +36,10 @@
                 <i class="el-icon-s-custom" />
                 Perfil
               </el-dropdown-item>
-              <el-dropdown-item v-if="$store.getters.isTeacher" command="medals">
+              <!-- <el-dropdown-item v-if="$store.getters.isTeacher" command="medals">
                 <i class="el-icon-medal" />
                 Medalhas
-              </el-dropdown-item>
+              </el-dropdown-item> -->
               <el-dropdown-item command="logout" divided>
                 <i class="el-icon-switch-button" />
                 Sair

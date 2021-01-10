@@ -17,11 +17,11 @@
             <i class="el-icon-trophy" />
             {{ user.completedProjects }} projetos concluídos
           </div>
-          <div>
+          <div v-if="user.email">
             <i class="el-icon-message" />
             {{ user.email }}
           </div>
-          <div>
+          <div v-if="user.linkedin">
             <i class="el-icon-link" />
             {{ user.linkedin }}
           </div>
@@ -45,7 +45,7 @@
                 {{ professionalInfo.activitiesPerformed }}
               </div>
             </div>
-            <div v-if="user.professionalInfos.length !== undefined">
+            <div v-if="user.professionalInfos.length == 0">
               Não há informações cadastradas
             </div>
           </el-tab-pane>
@@ -62,7 +62,7 @@
                 </div>
               </div>
             </div>
-            <div v-if="user.academicInfos !== undefined">
+            <div v-if="user.academicInfos == 0">
               Não há informações cadastradas
             </div>
           </el-tab-pane>
@@ -112,7 +112,7 @@
         </el-col>
       </el-row>
       <div v-else>
-        Não há projetos cadastrados.
+        Ainda não participou de nenhum projeto.
       </div>
     </div>
   </el-card>
