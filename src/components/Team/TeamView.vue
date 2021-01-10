@@ -233,6 +233,7 @@ export default {
   },
   methods: {
     updateTeams () {
+      this.$store.commit('SHOW_LOADING')
       TeamService
         .getTeam(this.project.id)
         .then(teams => {
@@ -251,6 +252,7 @@ export default {
             position: 'bottom-right'
           })
         })
+        .finally(() => this.$store.commit('HIDE_LOADING'))
     },
     getRoles () {
       if (this.$store.getters.isStudent) {

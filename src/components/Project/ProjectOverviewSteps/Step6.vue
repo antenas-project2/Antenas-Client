@@ -88,11 +88,13 @@ export default {
     }
   },
   mounted () {
+    this.$store.commit('SHOW_LOADING')
     UserService
       .getTeacherUsers()
       .then(res => {
         this.teacherList = res
       })
+      .finally(() => this.$store.commit('HIDE_LOADING'))
   },
   methods: {
     update () {

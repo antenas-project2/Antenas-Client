@@ -54,9 +54,9 @@
                   >
                     Editar
                   </el-button>
-                  <!-- <el-button type="danger" size="mini" @click="removeMedal(m)">
+                  <el-button type="danger" size="mini" @click="removeMedal(m)">
                     Excluir
-                  </el-button> -->
+                  </el-button>
                 </span>
               </div>
             </div>

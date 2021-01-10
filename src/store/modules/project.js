@@ -64,6 +64,9 @@ export default {
           })
       })
     },
+    updateProjectView ({ commit }, project) {
+      commit('UPDATE_PROJECT', project)
+    },
     closeProject ({ commit }, project) {
       return new Promise((resolve, reject) => {
         ProjectService

@@ -90,12 +90,12 @@
                     {{ student.student.name }}
                   </span>
                   <div
-                    v-for="medal in student.student.studentMedals"
-                    :key="medal.name"
+                    v-for="studentMedal in student.student.studentMedals"
+                    :key="studentMedal.medal.name"
                     class="medal-student"
                     @click="removeMedal()"
                   >
-                    <medal-template :medal="medal" />
+                    <medal-template v-if="!studentMedal.date" :medal="studentMedal.medal" />
                   </div>
                 </div>
               </div>
@@ -219,7 +219,7 @@ export default {
       const medal = this.getMedalById(ev.dataTransfer.getData('medalId'))
       team.studentTeamList.forEach(s => {
         const medalExists = s.student.studentMedals.find(m => m.id === medal.id)
-        if (!medalExists) s.student.studentMedals.push(medal)
+        if (!medalExists) s.student.studentMedals.push({ medal: medal })
       })
     },
     onDropStudent (ev, student, elIdd) {
@@ -227,7 +227,7 @@ export default {
       document.getElementById(elIdd).classList.remove('is-dragging')
       const medal = this.getMedalById(ev.dataTransfer.getData('medalId'))
       const medalExists = student.student.studentMedals.find(m => m.id === medal.id)
-      if (!medalExists) student.student.studentMedals.push(medal)
+      if (!medalExists) student.student.studentMedals.push({ medal: medal })
     },
     onDragEnter (ev, id) {
       ev.stopPropagation()
@@ -246,6 +246,10 @@ export default {
       TeamService.evaluate(this.teams)
         .catch(err => this.$throwError(err))
         .finally(() => this.$store.commit('HIDE_LOADING'))
+
+      // this.$store.dispatch('updateProjectView', this.project)
+      //   .catch(err => this.$throwError(err))
+      //   .finally(() => this.$store.commit('HIDE_LOADING'))
     }
   }
 }
