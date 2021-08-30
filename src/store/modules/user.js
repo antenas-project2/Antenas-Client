@@ -18,7 +18,7 @@ export default {
     role: authFromStorage.role || null
   },
   mutations: {
-    SET_CURRENT_USER (state, auth) {
+    SET_CURRENT_USER(state, auth) {
       auth = auth || {}
       state.id = auth.id || null
       state.email = auth.email || null
@@ -28,7 +28,7 @@ export default {
       state.role = role(auth.authorizations || null)
       localStorage.setItem('ANTENAS_AUTH', JSON.stringify(state))
     },
-    LOGOUT_CURRENT_USER (state) {
+    LOGOUT_CURRENT_USER(state) {
       state.id = null
       state.email = null
       state.name = null
@@ -39,7 +39,7 @@ export default {
     }
   },
   actions: {
-    authenticateUser ({ commit }, credentials) {
+    authenticateUser({ commit }, credentials) {
       return new Promise((resolve, reject) => {
         UserService.authenticateUser(credentials)
           .then(response => {
@@ -52,7 +52,7 @@ export default {
           })
       })
     },
-    registerUser ({ commit }, credentials) {
+    registerUser({ commit }, credentials) {
       return new Promise((resolve, reject) => {
         UserService.registUser(credentials)
           .then(response => {
@@ -65,7 +65,7 @@ export default {
           })
       })
     },
-    loadCurrentUserInfo ({ commit }) {
+    loadCurrentUserInfo({ commit }) {
       return new Promise((resolve, reject) => {
         UserService.getUserInfo()
           .then(auth => {

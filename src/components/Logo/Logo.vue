@@ -1,13 +1,9 @@
 <template>
-  <div
-    class="logo"
-    :class="`logo--${ variant }`"
-    @click="redirect()"
-  >
-    <h1 class="logo-title">
+  <div class="logo" @click="redirect()">
+    <h1 class="logo__title">
       Antenas
     </h1>
-    <h2 class="logo-subtitle">
+    <h2 class="logo__subtitle">
       Um projeto FATEC
     </h2>
   </div>
@@ -15,14 +11,8 @@
 
 <script>
 export default {
-  props: {
-    variant: {
-      type: String,
-      default: ''
-    }
-  },
   methods: {
-    redirect () {
+    redirect() {
       this.$router.push('/projects')
     }
   }
@@ -36,21 +26,19 @@ export default {
   display: inline-flex;
   align-items: center;
   flex-direction: column;
-  color: white;
   cursor: pointer;
-  .logo-title {
-    margin-top: -6px;
+
+  &__title {
     font-weight: 600;
-    font-size: 27px !important;
-    font-style: normal;
-  }
-  .logo-subtitle {
-    font-weight: 200;
-    font-size: 12px;
-    font-style: normal;
-  }
-  &--blue {
     color: $--color-primary;
+    font-size: 25px !important;
+    line-height: 1;
+  }
+  &__subtitle {
+    color: $--color-primary;
+    font-weight: 300;
+    font-size: 11px;
+    font-style: normal;
   }
 }
 </style>

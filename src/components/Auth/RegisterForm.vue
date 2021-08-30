@@ -67,7 +67,7 @@ import { mask } from 'vue-the-mask'
 
 export default {
   directives: { mask },
-  data () {
+  data() {
     const validatePass = (rule, value, callback) => {
       if (value !== this.form.password) callback(new Error('Confirmação diferente de senha'))
       else callback()
@@ -112,15 +112,20 @@ export default {
     }
   },
   computed: {
-    isStudent () {
+    isStudent() {
       return this.form.role === 'STUDENT'
     },
-    isRepresentative () {
+    isRepresentative() {
       return this.form.role === 'REPRESENTATIVE'
     }
   },
   methods: {
-    submitForm () {
+    submitForm() {
+      console.log('?')
+      this.form.telephone = this.form.telephone.replace(' ', '')
+      this.form.telephone = this.form.telephone.replace('(', '')
+      this.form.telephone = this.form.telephone.replace(')', '')
+      this.form.telephone = this.form.telephone.replace('-', '')
       this.$refs.form.validate((valid) => {
         if (valid) {
           if (this.step === 1) {

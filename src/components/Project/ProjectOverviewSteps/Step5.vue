@@ -1,9 +1,26 @@
 <template>
-  <div v-if="$store.getters.isCadi || $store.getters.isRepresentative" class="project-step-5">
-    <div v-if="$store.getters.isCadi">
-      <h3 class="mb-12">
-        Adicione um local e as datas possíveis para a reunião
-      </h3>
+  <div
+    v-if="$store.getters.isCadi || $store.getters.isRepresentative"
+    class="project-step-five"
+  >
+    <Information
+      v-if="$store.getters.isRepresentative && hasNotAddressInformation"
+    >
+      Nesta etapa um <b>Cadi</b> irá formalizar uma reunião adicionando data e
+      local do encontro com o <b>Representante</b>.
+    </Information>
+    <Information v-if="$store.getters.isCadi && hasAddressInformation">
+      A partir de agora o <b>Representante</b> irá definir qual o melhor horário
+      para reunião com o <b>CADI</b>.
+    </Information>
+
+    <div
+      v-if="$store.getters.isCadi && hasNotAddressInformation"
+      class="project-step-five__content"
+    >
+      <h5 class="project-step-five__title">
+        Preencha o local da reunião
+      </h5>
       <el-form
         ref="form"
         :model="form"
@@ -11,8 +28,8 @@
         label-position="top"
         label-width="130px"
       >
-        <el-row :gutter="20">
-          <el-col :span="19">
+        <el-row :gutter="10">
+          <el-col :sm="24" :md="15">
             <el-form-item label="Local" prop="place">
               <el-input
                 v-model="form.place"
@@ -22,7 +39,7 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :sm="24" :md="9">
             <el-form-item label="CEP" prop="zipCode">
               <el-input
                 v-model="form.zipCode"
@@ -30,13 +47,13 @@
                 type="text"
                 maxlength="9"
                 show-word-limit
-                @blur="findAddressByCep()"
+                @blur="findAddressByZipCode()"
               />
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
+        <el-row :gutter="10">
+          <el-col :sm="24" :md="12">
             <el-form-item label="Cidade" prop="city">
               <el-input
                 v-model="form.city"
@@ -46,7 +63,7 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :sm="24" :md="12">
             <el-form-item label="Bairro" prop="neighborhood">
               <el-input
                 v-model="form.neighborhood"
@@ -57,8 +74,8 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row :gutter="20">
-          <el-col :span="19">
+        <el-row :gutter="10">
+          <el-col :sm="24" :md="19">
             <el-form-item label="Rua" prop="street">
               <el-input
                 v-model="form.street"
@@ -68,67 +85,40 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :sm="24" :md="5">
             <el-form-item label="Número" prop="number">
-              <el-input
-                v-model="form.number"
-                type="number"
-              />
+              <el-input v-model="form.number" type="number" />
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row :gutter="20">
-          <el-col :span="7">
-            <el-form-item label="* Data e hora da reunião" prop="dates">
-              <el-date-picker
-                v-model="newMeetingDate"
-                type="datetime"
-                @change="addPossibleDate()"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <h4 v-if="form.dates.length" class="mt-24 mb-16">Data(s) cadastrada(s):</h4>
-        <el-tag
-          v-for="(date, index) in form.dates"
-          :key="index"
-          closable
-          effect="plain"
-          @close="handleClose(date)"
+
+        <!-- <hr /> -->
+
+        <ProjectPossibleDatePicker @newPossibleDate="addPossibleDate" />
+        <PossibleDatesList
+          :selectedPossibleDates="selectedPossibleDates"
+          @handleClose="handleClose"
+        />
+      </el-form>
+
+      <div class="d-flex justify-end">
+        <el-button
+          :disabled="!isFiveStepInformationsValid"
+          type="primary"
+          @click="update()"
         >
-          {{ date.dateTime | moment("DD/MM/YYYY HH:mm") }}
-        </el-tag>
-      </el-form>
+          Salvar local e datas
+        </el-button>
+      </div>
     </div>
-    <div v-else-if="$store.getters.isRepresentative">
-      <h4>Selecione uma data para a reunião:</h4>
-      <el-form
-        ref="form"
-        :model="form"
-        :rules="rules"
-        label-position="top"
-        label-width="130px"
-      >
-        <el-row :gutter="20">
-          <el-col :span="7">
-            <el-form-item prop="chosenDate">
-              <el-select v-model="form.chosenDate" class="w100 mt-20">
-                <el-option
-                  v-for="date in project.meeting.possibleDate"
-                  :key="date.dateTime"
-                  :value="date.dateTime"
-                  :label="$moment(date.dateTime).format('DD/MM/YYYY HH:mm')"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-    </div>
-    <div class="justify-end d-flex mt-28">
-      <el-button type="primary" @click="update()">
-        {{ $store.getters.isCadi ? 'Adicionar local e datas' : 'Selecionar' }}
-      </el-button>
+
+    <div
+      v-else-if="$store.getters.isRepresentative && hasAddressInformation"
+      class="project-step-five__content"
+    >
+      <RepresentativeSelectionMeet
+        :possibleDates="project.meeting.possibleDate"
+      />
     </div>
   </div>
 </template>
@@ -138,74 +128,132 @@ import { mask } from 'vue-the-mask'
 import jsonp from 'jsonp'
 import { mapGetters } from 'vuex'
 
+import ProjectPossibleDatePicker from '@/components/Project/ProjectOverviewSteps/ProjectPossibleDatePicker'
+import PossibleDatesList from '@/components/Project/ProjectOverviewSteps/PossibleDatesList'
+import RepresentativeSelectionMeet from '@/components/Project/ProjectOverviewSteps/RepresentativeSelectionMeet'
+import Information from '@/components/Information'
+
 export default {
+  components: {
+    ProjectPossibleDatePicker,
+    PossibleDatesList,
+    RepresentativeSelectionMeet,
+    Information
+  },
   directives: { mask },
-  data () {
-    const required = [{ required: true, message: 'Campo obrigatório', trigger: 'submit' }]
-    const validateDates = (rule, value, callback) => {
-      if (!this.form.dates.length) {
-        callback(new Error('Campo obrigatório'))
-      } else {
-        callback()
+  data() {
+    const defaultRule = [
+      {
+        required: true,
+        message: 'Campo obrigatório',
+        trigger: 'submit'
       }
-    }
+    ]
+
     return {
-      newMeetingDate: '',
+      selectedPossibleDates: [],
       form: {
         place: '',
         number: '',
         street: '',
         neighborhood: '',
         city: '',
-        zipCode: '',
-        dates: [],
-        chosenDate: ''
+        zipCode: ''
       },
       rules: {
-        place: required,
-        number: required,
-        street: required,
-        neighborhood: required,
-        city: required,
-        zipCode: required,
-        dates: [{ validator: validateDates, trigger: 'submit' }],
-        chosenDate: required
+        place: defaultRule,
+        number: defaultRule,
+        street: defaultRule,
+        neighborhood: defaultRule,
+        city: defaultRule,
+        zipCode: defaultRule
       }
     }
   },
   computed: {
     ...mapGetters({
       project: 'selectedProject'
-    })
+    }),
+    isFiveStepInformationsValid() {
+      return this.selectedPossibleDates.length > 0
+    },
+    hasAddressInformation() {
+      return (
+        this.project.meeting.address.place &&
+        (this.project.meeting.address.number ||
+          this.project.meeting.address.number === 0) &&
+        this.project.meeting.address.street &&
+        this.project.meeting.address.neighborhood &&
+        this.project.meeting.address.city &&
+        this.project.meeting.address.zipCode &&
+        this.project.meeting.possibleDate.length > 0
+      )
+    },
+    hasNotAddressInformation() {
+      return (
+        !this.project.meeting.address.place ||
+        (!this.project.meeting.address.number &&
+          this.project.meeting.address.number !== 0) ||
+        !this.project.meeting.address.street ||
+        !this.project.meeting.address.neighborhood ||
+        !this.project.meeting.address.city ||
+        !this.project.meeting.address.zipCode ||
+        !this.project.meeting.possibleDate.length
+      )
+    }
   },
-  mounted () {
-    this.form = this.project.meeting.address
-    this.form.dates = this.project.meeting.possibleDate
+  watch: {
+    project() {
+      this.selectedPossibleDates = []
+      this.form = {
+        place: '',
+        number: '',
+        street: '',
+        neighborhood: '',
+        city: '',
+        zipCode: ''
+      }
+    }
+  },
+  mounted() {
+    this.form = { ...JSON.parse(JSON.stringify(this.project.meeting.address)) }
+    this.selectedPossibleDates = JSON.parse(
+      JSON.stringify(this.project.meeting.possibleDate)
+    )
   },
   methods: {
-    update () {
-      this.$refs.form.validate((valid) => {
-        if (valid) {
-          this.$store.commit('SHOW_LOADING')
+    isZipCodeValid(zipCode) {
+      return (
+        /^[0-9]{5}-[0-9]{3}$/.test(zipCode) ||
+        /^[0-9]{5}[0-9]{3}$/.test(zipCode)
+      )
+    },
+    update() {
+      this.$refs.form.validate(isValid => {
+        if (isValid) {
           const project = JSON.parse(JSON.stringify(this.project))
-          if (this.form.chosenDate) project.meeting.chosenDate = this.form.chosenDate
-          else {
-            project.meeting.address = this.form
-            project.meeting.possibleDate = this.form.dates
-          }
-          this.$store.dispatch('updateProject', project)
+
+          project.meeting.address = JSON.parse(JSON.stringify(this.form))
+          project.meeting.possibleDate = JSON.parse(
+            JSON.stringify(this.selectedPossibleDates)
+          )
+
+          this.$store
+            .dispatch('updateProject', project)
             .catch(err => this.$throwError(err))
-            .finally(() => this.$store.commit('HIDE_LOADING'))
         }
       })
     },
-    findAddressByCep () {
+    findAddressByZipCode() {
       const self = this
-      const cep = this.form.zipCode
-      if (/^[0-9]{5}-[0-9]{3}$/.test(cep) || /^[0-9]{5}[0-9]{3}$/.test(cep)) {
-        jsonp(`https://viacep.com.br/ws/${cep}/json/`, null, function (err, address) {
-          if (err) this.$throwError(err)
-          else {
+      const zipCode = this.form.zipCode
+      const addressDataUrl = `https://viacep.com.br/ws/${zipCode}/json/`
+
+      if (this.isZipCodeValid(zipCode)) {
+        jsonp(addressDataUrl, null, (err, address) => {
+          if (err) {
+            this.$throwError(err)
+          } else {
             self.form.city = address.localidade
             self.form.street = address.logradouro
             self.form.neighborhood = address.bairro
@@ -214,22 +262,53 @@ export default {
         })
       }
     },
-    addPossibleDate () {
-      this.form.dates.push({ dateTime: this.newMeetingDate })
-      this.newMeetingDate = ''
+    addPossibleDate(meetingDate) {
+      this.selectedPossibleDates.push({ dateTime: meetingDate })
     },
-    handleClose (tag) {
-      this.form.dates.splice(this.form.dates.indexOf(tag), 1)
+    handleClose(tag) {
+      const selectedDatePosition = this.selectedPossibleDates.indexOf(tag)
+      this.selectedPossibleDates.splice(selectedDatePosition, 1)
     }
   }
 }
 </script>
 
 <style lang="scss">
-.project-step-5 {
-  padding: 28px;
-  border-radius: 4px;
-  background-color: #f4f4f5;
+@import '@/styles/_colors.scss';
+
+.project-step-five {
+  &__content {
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    background-color: #ffffff;
+    border: 1px solid $--default-border-color;
+
+    .el-form {
+      .el-form-item {
+        &__label {
+          line-height: normal;
+          padding-bottom: 5px !important;
+          font-size: 0.8rem;
+          color: $--color-text-regular;
+        }
+        &__content {
+          line-height: 0;
+
+          textarea {
+            font-family: 'Inter';
+            border: 1px solid $--default-border-color;
+          }
+        }
+      }
+    }
+  }
+
+  &__title {
+    margin-bottom: 8px;
+    color: $--color-text-title;
+  }
+
   .el-tag {
     margin: 0 12px 12px 0;
   }
@@ -238,7 +317,7 @@ export default {
     -webkit-appearance: none;
     margin: 0;
   }
-  input[type=number] {
+  input[type='number'] {
     -moz-appearance: textfield;
   }
 }

@@ -96,7 +96,7 @@ export default {
       default: false
     }
   },
-  data () {
+  data() {
     const required = [{ required: true, message: 'Campo obrigatório', trigger: 'submit' }]
     return {
       medalForm: {
@@ -118,20 +118,20 @@ export default {
       'medalsCategories',
       'loading'
     ]),
-    isNew () {
+    isNew() {
       return !(this.medal && this.medal.id)
     },
     dialogVisible: {
-      get () {
+      get() {
         return this.visible
       },
-      set (visible) {
+      set(visible) {
         this.$emit('update:visible', visible)
       }
     }
   },
   watch: {
-    dialogVisible (visible) {
+    dialogVisible(visible) {
       if (visible) {
         if (this.medal && this.medal.id) {
           this.medalForm = { ...this.medal }
@@ -148,7 +148,7 @@ export default {
     }
   },
   methods: {
-    createMedal () {
+    createMedal() {
       this.$refs.medalForm.validate(valid => {
         if (valid) {
           this.$store.commit('SHOW_LOADING')
@@ -169,18 +169,18 @@ export default {
         }
       })
     },
-    editMedal (medal) {
+    editMedal(medal) {
       this.medalForm = { ...medal }
       this.dialogVisible = true
     },
-    changePhoto (file) {
+    changePhoto(file) {
       const isJPG = ['image/jpeg', 'image/png'].includes(file.raw.type)
       const isLt2M = file.raw.size / 1024 / 1024 < 2
       if (!isJPG) this.$message.error('Imagem deve estar no formato JPG ou PNG.')
       if (!isLt2M) this.$message.error('Imagem não pode exceder 2 MB.')
       if (isJPG && isLt2M) {
         const reader = new FileReader()
-        reader.onload = e => { this.medalForm.picture = e.target.result }
+        reader.onload = e => { this.medal.picture = e.target.result }
         reader.readAsDataURL(file.raw)
       }
       return isJPG && isLt2M

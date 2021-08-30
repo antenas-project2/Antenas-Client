@@ -1,9 +1,9 @@
 <template>
-  <div v-if="$store.getters.isCadi" class="project-step-6">
-    <div>
-      <h3>
+  <div>
+    <div v-if="$store.getters.isCadi" class="project-step-six">
+      <h5 class="project-step-six__title">
         Escolha o professor responsável pelo projeto
-      </h3>
+      </h5>
       <el-form
         ref="form"
         :model="form"
@@ -22,7 +22,7 @@
           </el-select>
         </el-form-item>
         <el-row :gutter="20">
-          <el-col :span="19">
+          <el-col :md="19">
             <el-form-item label="Curso" prop="course">
               <el-select v-model="form.course" class="w100">
                 <el-option
@@ -34,7 +34,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :md="5">
             <el-form-item label="Semestre" prop="semester">
               <el-input-number
                 v-model="form.semester"
@@ -45,25 +45,34 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <div class="justify-end d-flex mt-28">
-          <el-button
-            type="primary"
-            @click="update()"
-          >
+        <div class="justify-end d-flex mt-10">
+          <el-button type="primary" @click="update()">
             Escolher professor
           </el-button>
         </div>
       </el-form>
     </div>
+    <Information v-else>
+      Na etapa de <b>Designar professor</b> o <b>Cadi</b> irá incluir um
+      <b>professor</b> para se responsabilizar pelo projeto e seu devido
+      andamento.
+    </Information>
   </div>
 </template>
 
 <script>
 import UserService from '@/services/UserService.js'
 
+import Information from '@/components/Information'
+
 export default {
-  data () {
-    const required = [{ required: true, message: 'Campo obrigatório', trigger: 'submit' }]
+  components: {
+    Information
+  },
+  data() {
+    const required = [
+      { required: true, message: 'Campo obrigatório', trigger: 'submit' }
+    ]
     return {
       form: {
         teacher: '',
@@ -87,25 +96,27 @@ export default {
       teacherList: []
     }
   },
-  mounted () {
+  mounted() {
     this.$store.commit('SHOW_LOADING')
-    UserService
-      .getTeacherUsers()
+    UserService.getTeacherUsers()
       .then(res => {
         this.teacherList = res
       })
       .finally(() => this.$store.commit('HIDE_LOADING'))
   },
   methods: {
-    update () {
-      this.$refs.form.validate((valid) => {
+    update() {
+      this.$refs.form.validate(valid => {
         if (valid) {
           this.$store.commit('SHOW_LOADING')
-          const project = JSON.parse(JSON.stringify(this.$store.getters.selectedProject))
+          const project = JSON.parse(
+            JSON.stringify(this.$store.getters.selectedProject)
+          )
           project.course = this.form.course
           project.teacher = { id: this.form.teacher }
           project.semester = this.form.semester
-          this.$store.dispatch('updateProject', project)
+          this.$store
+            .dispatch('updateProject', project)
             .catch(err => this.$throwError(err))
             .finally(() => this.$store.commit('HIDE_LOADING'))
         }
@@ -115,10 +126,35 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.project-step-6 {
-  padding: 28px;
+<style lang="scss">
+@import '@/styles/_colors.scss';
+
+.project-step-six {
+  padding: 12px;
   border-radius: 4px;
-  background-color: #f4f4f5;
+  margin-bottom: 20px;
+  background-color: #ffffff;
+  border: 1px solid $--default-border-color;
+
+  &__title {
+    margin-bottom: 8px;
+  }
+
+  .el-form {
+    .el-form-item {
+      &__label {
+        line-height: normal;
+        padding-bottom: 5px !important;
+        font-size: 0.8rem;
+        color: $--color-text-regular;
+      }
+      &__content {
+        textarea {
+          font-family: 'Inter';
+          border: 1px solid $--default-border-color;
+        }
+      }
+    }
+  }
 }
 </style>

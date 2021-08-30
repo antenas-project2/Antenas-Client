@@ -1,0 +1,86 @@
+<template>
+  <ul class="sidebar d-flex flex-column justify-center h100">
+    <li>
+      <div
+        :class="{ 'is-active': isProjectTabSelected }"
+        class="icon-container d-flex justify-center algin-center"
+      >
+        <box-icon class="sidebar-icon" name="spreadsheet" />
+      </div>
+    </li>
+    <li>
+      <div
+        :class="{ 'is-active': isUsersTableSelected }"
+        class="icon-container d-flex justify-center algin-center"
+      >
+        <box-icon class="sidebar-icon" name="table"></box-icon>
+      </div>
+    </li>
+  </ul>
+</template>
+
+<script>
+export default {
+  mounted() {
+    console.log(this.$route)
+  },
+  computed: {
+    isProjectTabSelected() {
+      return this.$route.name === 'projects'
+    },
+    isUsersTableSelected() {
+      return this.$route.name === ''
+    }
+  },
+  methods: {
+    goToProjectPage() {
+      if (this.$route.name !== 'projects') {
+        this.$router.push({ name: 'projects' })
+      }
+    }
+    // goToUsersTablePage() {
+    //   if (this.$route.name !== '')
+    // }
+  }
+}
+</script>
+
+<style scoped lang="scss">
+@import '@/styles/_colors.scss';
+
+.sidebar {
+  min-width: 65px;
+  width: 65px;
+  background-color: #ffffff;
+  transition: all .3s;
+
+  li {
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+
+    .icon-container {
+      padding: 8px;
+      border-radius: 50px;
+      cursor: pointer;
+      fill: $--color-text-regular;
+
+      &.is-active,
+      &:hover {
+        background-color: $--default-hover-color;
+      }
+
+      .sidebar-icon {
+        width: 24px;
+        height: 24px;
+      }
+
+      &.is-active .sidebar-icon {
+        fill: $--color-primary;
+      }
+    }
+  }
+}
+</style>

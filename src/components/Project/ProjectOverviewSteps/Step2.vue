@@ -1,40 +1,53 @@
 <template>
-  <div v-if="$store.getters.isCadi && !project.refused" class="project-step-2">
-    <el-alert
-      :closable="false"
-      title="Leia as especificações do projeto e decida-se se ele está apto a continuar:"
-      type="info"
+  <div class="project-step-two">
+    <div
+      v-if="$store.getters.isCadi && !project.refused"
+      class="project-step-two__action"
     >
-      <el-button
-        type="danger"
-        icon="el-icon-close"
-        @click="update(true)"
+      <h5 class="project-step-two__title">Avaliação inicial</h5>
+      <el-alert
+        class="project-step-two__alert-container"
+        title="Leia as especificações do projeto e decida-se se ele está apto a continuar:"
+        type="info"
+        :closable="false"
       >
-        Rejeitar
-      </el-button>
-      <el-button
-        type="success"
-        class="ml-16"
-        icon="el-icon-check"
-        @click="update(false)"
-      >
-        Aprovar
-      </el-button>
-    </el-alert>
+        <el-button type="danger" icon="el-icon-close" @click="update(true)">
+          Rejeitar
+        </el-button>
+        <el-button
+          type="success"
+          class="ml-16"
+          icon="el-icon-check"
+          @click="update(false)"
+        >
+          Aprovar
+        </el-button>
+      </el-alert>
+    </div>
+
+    <Information v-else>
+      Na etapa de <b>Avaliação inicial</b>, um <b>Cadi</b> irá analisar o projeto e decidir se o mesmo
+      está apto a continuar. <b>Aguarde</b> até que seja feita a revisão.
+    </Information>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 
+import Information from '@/components/Information.vue'
+
 export default {
+  components: {
+    Information
+  },
   computed: {
     ...mapGetters({
       project: 'selectedProject'
     })
   },
   methods: {
-    update (refused) {
+    update(refused) {
       const project = JSON.parse(JSON.stringify(this.project))
       if (refused) {
         this.$prompt('* Informe o motivo da recusa', 'Avaliação Inicial', {
@@ -49,19 +62,24 @@ export default {
           this.dispatchUpdate(project)
         })
       } else {
-        this.$confirm('Tem certeza que deseja continuar?', 'Avaliação Inicial', {
-          confirmButtonText: 'Aprovar',
-          cancelButtonText: 'Cancelar',
-          confirmButtonClass: 'el-button--success'
-        }).then(() => {
+        this.$confirm(
+          'Tem certeza que deseja continuar?',
+          'Avaliação Inicial',
+          {
+            confirmButtonText: 'Aprovar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonClass: 'el-button--success'
+          }
+        ).then(() => {
           project.refused = false
           this.dispatchUpdate(project)
         })
       }
     },
-    dispatchUpdate (project) {
+    dispatchUpdate(project) {
       this.$store.commit('SHOW_LOADING')
-      this.$store.dispatch('updateProject', project)
+      this.$store
+        .dispatch('updateProject', project)
         .catch(err => this.$throwError(err))
         .finally(() => this.$store.commit('HIDE_LOADING'))
     }
@@ -72,6 +90,44 @@ export default {
 <style lang="scss">
 @import '@/styles/_colors.scss';
 
-.project-step-2 {
+.project-step-two {
+  margin-bottom: 20px;
+
+  &__alert-container {
+    background-color: #ffffff !important;
+
+    .el-alert__content {
+      padding: 5px;
+    }
+    .el-alert__title {
+      font-size: 0.9rem;
+      color: $--color-text-title;
+    }
+  }
+
+  &__title {
+    margin-bottom: 8px;
+    color: $--color-text-title;
+  }
+
+  &__action,
+  &__warning {
+    border: 1px solid $--default-border-color;
+    border-radius: 4px;
+    padding: 12px;
+  }
+
+  &__warning {
+    &__description {
+      font-size: 0.8rem;
+      color: $--color-primary;
+
+      .info-icon {
+        fill: $--color-primary;
+        width: 2rem;
+        margin-right: 10px;
+      }
+    }
+  }
 }
 </style>

@@ -207,7 +207,7 @@ import TeamService from '@/services/TeamService'
 import UserService from '@/services/UserService.js'
 
 export default {
-  data () {
+  data() {
     return {
       teams: [],
       students: [],
@@ -224,15 +224,18 @@ export default {
     }
   },
   computed: {
-    canEdit () {
+    canEdit() {
       return this.$store.getters.isStudent && !this.project.finished
     }
   },
-  created () {
+  created() {
     this.project = JSON.parse(JSON.stringify(this.$store.getters.selectedProject))
   },
+  mounted() {
+    this.getTeam()
+  },
   methods: {
-    updateTeams () {
+    updateTeams() {
       this.$store.commit('SHOW_LOADING')
       TeamService
         .getTeam(this.project.id)
@@ -254,7 +257,7 @@ export default {
         })
         .finally(() => this.$store.commit('HIDE_LOADING'))
     },
-    getRoles () {
+    getRoles() {
       if (this.$store.getters.isStudent) {
         TeamService
           .getRoles()
@@ -263,14 +266,14 @@ export default {
           })
       }
     },
-    getRoleObject () {
+    getRoleObject() {
       const roleList = []
       this.roles.forEach(role => {
         roleList.push({ id: role })
       })
       return roleList
     },
-    save () {
+    save() {
       TeamService.addTeam(
         {
           project: { id: this.project.id },
@@ -305,7 +308,7 @@ export default {
         })
       this.clear()
     },
-    update () {
+    update() {
       if (this.projectUrl && this.communicationLink && ((!this.projectUrl.includes('http://') && !this.projectUrl.includes('https://')) || !this.projectUrl ||
       (!this.communicationLink.includes('http://') && !this.communicationLink.includes('https://')) || !this.communicationLink)) {
         this.$notify({
@@ -351,7 +354,7 @@ export default {
         this.clear()
       }
     },
-    formatStudentRoles (member) {
+    formatStudentRoles(member) {
       let roleString = ''
       member.role.forEach(role => {
         if (roleString.length > 0) {
@@ -361,7 +364,7 @@ export default {
       })
       return roleString
     },
-    removeStudent (student) {
+    removeStudent(student) {
       this.$confirm(`Tem certeza que deseja remover ${student.student.name} da equipe?`, 'Remover aluno', {
         confirmButtonText: 'Remover',
         cancelButtonText: 'Cancelar',
@@ -392,7 +395,7 @@ export default {
           })
       })
     },
-    getTeam () {
+    getTeam() {
       this.updateTeams()
       UserService
         .getStudentsUsers()
@@ -401,7 +404,7 @@ export default {
         })
       this.getRoles()
     },
-    editMember (member) {
+    editMember(member) {
       this.editingMember = member
       this.addMember = true
       this.newTeamMember = member.student.name
@@ -409,13 +412,13 @@ export default {
         this.roles.push(item.id)
       })
     },
-    clear () {
+    clear() {
       this.editingMember = null
       this.addMember = false
       this.newTeamMember = ''
       this.roles = []
     },
-    updateRole () {
+    updateRole() {
       this.editingMember.role = this.getRoleObject()
       TeamService.updateStudentTeam(this.editingMember)
         .then(() => {
@@ -437,11 +440,11 @@ export default {
         })
       this.clear()
     },
-    openUrl (url) {
+    openUrl(url) {
       const win = window.open(url, '_blank')
       win.focus()
     },
-    openStudentProfile (student) {
+    openStudentProfile(student) {
       this.$router.push(`/${student.name.replace(' ', '.').replace(' ', '')}-${student.id}`)
     }
   }
@@ -475,7 +478,7 @@ export default {
   filter: drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.123));
 }
 .role-view {
-  font-family: Open Sans;
+  // font-family: Open Sans;
   font-size: 14px;
   line-height: 14px;
   color: #9F9D9D;
