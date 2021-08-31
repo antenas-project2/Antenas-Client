@@ -259,6 +259,11 @@ export default {
       return this.project.refused ? 'error' : 'finish'
     }
   },
+  watch: {
+    project() {
+      this.tabPosition = '0'
+    }
+  },
   methods: {
     formatDate(date) {
       moment.locale('pt-br')
