@@ -4,6 +4,7 @@
       <div
         :class="{ 'is-active': isProjectTabSelected }"
         class="icon-container d-flex justify-center algin-center"
+        @click="goToProjectPage()"
       >
         <box-icon class="sidebar-icon" name="spreadsheet" />
       </div>
@@ -14,6 +15,15 @@
         class="icon-container d-flex justify-center algin-center"
       >
         <box-icon class="sidebar-icon" name="table"></box-icon>
+      </div>
+    </li>
+    <li v-if="$store.getters.isStudent">
+      <div
+        :class="{ 'is-active': isUsersTableSelected }"
+        class="icon-container d-flex justify-center algin-center"
+        @click="goToMyProfile()"
+      >
+        <box-icon class="sidebar-icon" name="user"></box-icon>
       </div>
     </li>
   </ul>
@@ -37,6 +47,13 @@ export default {
       if (this.$route.name !== 'projects') {
         this.$router.push({ name: 'projects' })
       }
+    },
+    goToMyProfile() {
+      this.$router.push(
+        `/${this.$store.getters.userName.replace(' ', '.').replace(' ', '')}-${
+          this.$store.getters.userId
+        }`
+      )
     }
     // goToUsersTablePage() {
     //   if (this.$route.name !== '')
@@ -52,7 +69,7 @@ export default {
   min-width: 65px;
   width: 65px;
   background-color: #ffffff;
-  transition: all .3s;
+  transition: all 0.3s;
 
   li {
     height: 60px;

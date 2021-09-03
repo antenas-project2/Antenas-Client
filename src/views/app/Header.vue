@@ -7,18 +7,18 @@
         <p class="personal-information__role">{{ userRoleDisplay }}</p>
       </div>
       <el-dropdown @command="dropdownClick">
-        <el-avatar class="avatar" size="medium" fit="scale-down">
-          <img v-if="userPhoto" :src="userPhoto" />
+        <el-avatar size="medium" fit="scale-down">
+          <img v-if="userPhoto" :src="userPhoto" class="header__avatar" />
           <span v-else>
             {{ userInitials }}
           </span>
         </el-avatar>
         <el-dropdown-menu slot="dropdown">
-          <!-- <el-dropdown-item command="account">
+          <el-dropdown-item command="account">
             <i class="el-icon-user" />
             Dados da conta
           </el-dropdown-item>
-          <el-dropdown-item v-if="$store.getters.isStudent" command="profile">
+          <!--  <el-dropdown-item v-if="$store.getters.isStudent" command="profile">
             <i class="el-icon-s-custom" />
             Perfil
           </el-dropdown-item> -->
@@ -101,8 +101,10 @@ export default {
   margin: 0;
   z-index: 9;
 
-  .avatar {
+  &__avatar {
     cursor: pointer;
+    object-fit: cover;
+    width: 100%;
   }
   .personal-information {
     margin-right: 8px;
