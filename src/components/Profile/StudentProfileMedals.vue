@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="medals" v-if="medals">
-      <h4 v-if="medals" class="mb-2">Medalhas ({{ medals.length }})</h4>
+      <h4 v-if="medals" class="my-2">Medalhas ({{ medals.length }})</h4>
       <div class="d-flex justify-start">
         <div v-for="medal in medals" :key="medal.id">
           <Medal size="lg" :medal="medal" />
