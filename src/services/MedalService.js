@@ -1,25 +1,25 @@
 import http from '../helpers/Http'
 
 export default {
-  getMedals () {
+  getMedals() {
     return http
       .get('/medal')
       .then(res => res.data)
   },
 
-  updateMedal () {
+  updateMedal() {
     return http
       .put('/medal')
       .then(res => res.data)
   },
 
-  saveMedal (medal) {
+  saveMedal(medal) {
     return http
       .post('/medal', medal)
       .then(res => res.data)
   },
 
-  removeMedal (medal) {
+  removeMedal(medal) {
     return http
       .delete('/medal', medal)
       .then(res => res.data)

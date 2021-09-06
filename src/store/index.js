@@ -25,13 +25,13 @@ const state = {
 }
 
 const mutations = {
-  SHOW_LOADING (state) {
+  SHOW_LOADING(state) {
     state.loading = true
   },
-  HIDE_LOADING (state) {
+  HIDE_LOADING(state) {
     state.loading = false
   },
-  SET_PROJECT_MODAL (state, bol) {
+  SET_PROJECT_MODAL(state, bol) {
     state.projectModal = bol
   }
 }

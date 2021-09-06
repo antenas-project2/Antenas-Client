@@ -1,0 +1,11 @@
+@import './colors';
+
+.text-success {
+  color: $--color-success;
+}
+.text-danger {
+  color: $--color-danger;
+}
+.text-primary {
+  color: $--color-primary;
+}

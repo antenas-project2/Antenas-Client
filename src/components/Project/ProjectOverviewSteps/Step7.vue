@@ -1,95 +1,75 @@
 <template>
-  <div v-if="$store.getters.isTeacher" class="project-step-7">
-    <el-alert
-      :closable="false"
-      title="É necessário iniciar o projeto para que fique visível para os alunos."
-      type="info"
-    >
-      <el-button
-        :type="project.open ? 'danger' : 'primary'"
-        class="ml-16"
-        :icon="project.open ? 'el-icon-document-checked' : 'el-icon-check'"
-        @click="confirmDialog()"
-      >
-        {{ project.open ? 'Encerrar' : 'Iniciar' }}
-      </el-button>
+  <div>
+    <div v-if="$store.getters.isTeacher" class="project-step-seven">
+      <div class="project-step-seven__content">
+        <div v-if="!project.open" class="d-flex flex-column align-center">
+          <h4 class="project-step-seven__content__title">
+            Verifique se todas as informações estão corretas!
+          </h4>
+          <h6 class="project-step-seven__content__subtitle">
+            Caso tudo já esteja completo, inicie o projeto para ficar visível
+            aos alunos.
+          </h6>
+        </div>
+        <div v-else class="d-flex flex-column align-center">
+          <h4 class="project-step-seven__content__title">
+            O projeto está em execução!
+          </h4>
+          <h6 class="project-step-seven__content__subtitle">
+            Quando quiser pode clicar no botão <b>Encerrar projeto</b> para
+            prosseguir para próxima fase.
+          </h6>
+        </div>
 
-      <el-button
-        type="primary"
-        class="ml-16"
-        icon="el-icon-edit-outline"
-        @click="editProject = !editProject"
-      >
-        Editar informações do projeto
-      </el-button>
-    </el-alert>
-    <el-dialog
-      title="Editando informações do projeto"
-      :visible.sync="editProject"
-      width="50%"
-      :close-on-click-modal="false"
-    >
-      <el-form
-        ref="form"
-        v-loading="$store.getters.loading"
-        class="edit-project-setp-7"
-        label-position="top"
-        label-width="130px"
-      >
-        <el-form-item label="Resumo" prop="shortDescription">
-          <el-input
-            v-model="project.shortDescription"
-            type="textarea"
-            :rows="4"
-            maxlength="1000"
-            show-word-limit
-          />
-        </el-form-item>
-        <el-form-item label="Descrição completa" prop="completeDescription">
-          <el-input
-            v-model="project.completeDescription"
-            type="textarea"
-            :rows="4"
-            maxlength="1000"
-            show-word-limit
-          />
-        </el-form-item>
-        <el-form-item label="Descrição da tecnologia" prop="technologyDescription">
-          <el-input
-            v-model="project.technologyDescription"
-            type="textarea"
-            :rows="4"
-            maxlength="1000"
-            show-word-limit
-          />
-        </el-form-item>
-        <div class="justify-end d-flex mt-28">
+        <div>
           <el-button
-            class="ml-16"
-            @click="editProject = !editProject"
+            :type="project.open ? 'danger' : 'success'"
+            @click="confirmDialog()"
           >
-            Cancelar
+            {{ project.open ? 'Encerrar projeto' : 'Iniciar projeto' }}
           </el-button>
           <el-button
-            type="primary"
-            class="ml-16"
-            @click="update(false)"
+            icon="el-icon-edit-outline"
+            @click="editProjectModalVisibility = !editProjectModalVisibility"
           >
-            Salvar
+            Editar projeto
           </el-button>
         </div>
-      </el-form>
-    </el-dialog>
+      </div>
+
+      <StepSevenEditProject v-model="editProjectModalVisibility" />
+    </div>
+    <div v-else>
+      <Information v-if="!project.open">
+        Nesta etapa o <b>Professor</b> irá se certificar que o projeto tem todas
+        as informações necessárias e então irá dar inicio no mesmo.
+      </Information>
+      <Information v-else>
+        O <b>Professor</b> já iniciou o projeto e o mesmo já está disponível
+        para ser desenvolvido.
+        <span v-if="$store.getters.isStudent">
+          Crie agora mesmo a sua equipe ou procure uma já cadastrada! =)
+        </span>
+      </Information>
+    </div>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 
+import StepSevenEditProject from './StepSevenEditProject'
+import Information from '@/components/Information'
+
 export default {
-  data () {
+  components: {
+    StepSevenEditProject,
+    Information
+  },
+  data() {
     return {
-      editProject: false
+      editProject: false,
+      editProjectModalVisibility: false
     }
   },
   computed: {
@@ -98,26 +78,32 @@ export default {
     })
   },
   methods: {
-    update (openProject) {
+    update(openProject) {
       this.$store.commit('SHOW_LOADING')
       const project = JSON.parse(JSON.stringify(this.project))
       if (openProject) {
         project.open = !project.open
       }
-      this.$store.dispatch('updateProject', project)
+      this.$store
+        .dispatch('updateProject', project)
         .catch(err => this.$throwError(err))
         .finally(() => this.$store.commit('HIDE_LOADING'))
     },
-    confirmDialog () {
-      const confirmMessage = this.project.open ? 'Tem certeza de que deseja encerrar o projeto? Ele ficará invisível para os alunos.' : 'Deseja iniciar o projeto?'
+    confirmDialog() {
+      const confirmMessage = this.project.open
+        ? 'Tem certeza de que deseja encerrar o projeto? Ele ficará invisível para os alunos.'
+        : 'Deseja iniciar o projeto?'
       this.$confirm(confirmMessage, 'Entrega', {
         confirmButtonText: this.project.open ? 'Sim, encerrar' : 'Sim, iniciar',
         cancelButtonText: 'Cancelar',
-        confirmButtonClass: this.project.open ? 'el-button--danger' : 'el-button--success'
+        confirmButtonClass: this.project.open
+          ? 'el-button--danger'
+          : 'el-button--success'
       }).then(() => {
         if (this.project.open) {
           const project = JSON.parse(JSON.stringify(this.project))
-          this.$store.dispatch('closeProject', project)
+          this.$store
+            .dispatch('closeProject', project)
             .catch(err => this.$throwError(err))
             .finally(() => this.$store.commit('HIDE_LOADING'))
         } else {
@@ -132,6 +118,27 @@ export default {
 <style lang="scss">
 @import '@/styles/_colors.scss';
 
-.project-step-7 {
+.project-step-seven {
+  padding: 20px 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  background-color: #ffffff;
+  border: 1px solid $--default-border-color;
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    &__title {
+      margin-bottom: 5px;
+      color: $--color-text-title;
+    }
+    &__subtitle {
+      color: $--color-text-regular;
+      font-weight: 400;
+      margin-bottom: 20px;
+    }
+  }
 }
 </style>

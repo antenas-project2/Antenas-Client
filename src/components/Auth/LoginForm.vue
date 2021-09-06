@@ -14,7 +14,7 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       form: {
         email: '',
@@ -30,13 +30,16 @@ export default {
     }
   },
   methods: {
-    submitForm () {
+    submitForm() {
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.$store.commit('SHOW_LOADING')
           this.$store.dispatch('authenticateUser', this.form)
             .then(() => this.$router.push('/projects'))
-            .catch(err => this.$throwError(err))
+            .catch(err => {
+              alert(err)
+              this.$throwError(err)
+            })
             .finally(() => this.$store.commit('HIDE_LOADING'))
         }
       })

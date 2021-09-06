@@ -30,7 +30,7 @@ export default {
     ProfessionalInfo,
     AcademicInfo
   },
-  data () {
+  data() {
     return {
       user: {}
     }
@@ -40,7 +40,7 @@ export default {
       'loading'
     ])
   },
-  beforeMount () {
+  beforeMount() {
     this.$store.commit('SHOW_LOADING')
     UserService.getUser()
       .then((res) => {

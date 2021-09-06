@@ -2,14 +2,14 @@ import http from '../helpers/Http'
 import store from '@/store'
 
 export default {
-  authenticateUser (credentials) {
+  authenticateUser(credentials) {
     return http.post('/login', {
       email: credentials.email,
       password: credentials.password
     })
   },
 
-  registUser ({ name, email, password, role, cpf, ra, city, company, telephone }) {
+  registUser({ name, email, password, role, cpf, ra, city, company, telephone }) {
     const user = {
       name,
       email,
@@ -26,7 +26,7 @@ export default {
     })
   },
 
-  getUserInfo () {
+  getUserInfo() {
     return http
       .get('user')
       .then(res => {
@@ -34,7 +34,7 @@ export default {
       })
   },
 
-  getTeacherUsers () {
+  getTeacherUsers() {
     return http
       .get('/teacher')
       .then(res => {
@@ -48,7 +48,7 @@ export default {
       })
   },
 
-  getStudentsUsers () {
+  getStudentsUsers() {
     return http
       .get('/student')
       .then(res => {
@@ -65,21 +65,21 @@ export default {
       })
   },
 
-  getUser () {
+  getUser() {
     return http
       .get('user').then(res => {
         return res.data
       })
   },
 
-  getProfileInfo (id) {
+  getProfileInfo(id) {
     return http
       .get(`student/profile-info/${id}`).then(res => {
         return res.data
       })
   },
 
-  updateUser (user) {
+  updateUser(user) {
     return http
       .put(`${store.getters.userRole}/update`, user).then(res => res.data)
   }

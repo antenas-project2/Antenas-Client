@@ -3,3 +3,9 @@
     <router-view />
   </transition>
 </template>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+</style>

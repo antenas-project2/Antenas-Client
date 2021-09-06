@@ -128,13 +128,13 @@ export default {
     highcharts: Chart,
     MedalTemplate
   },
-  data () {
+  data() {
     return {
       currentProject: undefined,
       user: {}
     }
   },
-  beforeMount () {
+  beforeMount() {
     this.$store.commit('SHOW_LOADING')
     UserService.getProfileInfo(this.$route.params.userId)
       .then((res) => {
@@ -145,7 +145,7 @@ export default {
       .finally(() => this.$store.commit('HIDE_LOADING'))
   },
   methods: {
-    getChartOptions () {
+    getChartOptions() {
       return {
         series: this.getSeries(this.currentProject ? this.currentProject : this.user.studentTeam[0]),
         chart: {
@@ -167,7 +167,7 @@ export default {
         }
       }
     },
-    getChartOptionsAverage () {
+    getChartOptionsAverage() {
       return {
         series: this.getSeriesAverage(),
         chart: {
@@ -190,7 +190,7 @@ export default {
         }
       }
     },
-    getSeriesAverage () {
+    getSeriesAverage() {
       return [{
         name: 'Avaliação do professor',
         data: [
@@ -202,7 +202,7 @@ export default {
         pointPlacement: 'on'
       }]
     },
-    getSeries (project) {
+    getSeries(project) {
       const series = []
       if (project.evaluation) {
         series.push({

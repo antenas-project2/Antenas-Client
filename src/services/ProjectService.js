@@ -2,28 +2,28 @@ import http from '../helpers/Http'
 
 export default {
 
-  getProjects () {
+  getProjects() {
     return http.get('/project')
       .then(res => res.data)
   },
 
-  addProject (project) {
+  addProject(project) {
     return http.post('/project', project)
       .then(res => res.data)
   },
 
-  updateProject (project) {
+  updateProject(project) {
     return http.put('/project', project)
       .then(res => res.data)
   },
 
-  closeProject (project) {
+  closeProject(project) {
     console.log('close')
     return http.put('/project/close', project)
       .then(res => res.data)
   },
 
-  deleteProject (id) {
+  deleteProject(id) {
     return http.delete(`/project/${id}`)
   }
 }
