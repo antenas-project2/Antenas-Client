@@ -36,7 +36,9 @@ export default {
           this.$store.commit('SHOW_LOADING')
           this.$store.dispatch('authenticateUser', this.form)
             .then(() => this.$router.push('/projects'))
-            .catch(err => this.$throwError(err))
+            .catch(err => {
+              this.$throwError(err)
+            })
             .finally(() => this.$store.commit('HIDE_LOADING'))
         }
       })
