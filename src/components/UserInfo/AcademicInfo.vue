@@ -134,7 +134,7 @@ export default {
   props: {
     user: {
       type: Object,
-      default () {
+      default() {
         return {
           institution: '',
           course: '',
@@ -144,7 +144,7 @@ export default {
       }
     }
   },
-  data () {
+  data() {
     const required = [{ required: true, message: 'Campo obrigatório', trigger: 'submit' }]
     return {
       showDialog: false,
@@ -164,7 +164,7 @@ export default {
     }
   },
   methods: {
-    update () {
+    update() {
       this.$store.commit('SHOW_LOADING')
 
       const index = this.user.academicInfos.findIndex(item => item.id === this.form.id)
@@ -198,13 +198,13 @@ export default {
           }
         })
     },
-    deleteRow (row) {
+    deleteRow(row) {
       this.user.academicInfos = this.user.academicInfos.filter(info => {
         return info !== row
       })
       this.update()
     },
-    edit (row) {
+    edit(row) {
       this.form = row
       this.showDialog = true
     }

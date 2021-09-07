@@ -65,17 +65,17 @@ export default {
     LoginForm,
     RegisterForm
   },
-  data () {
+  data() {
     return {
       signUp: false
     }
   },
   computed: {
-    title () {
+    title() {
       return this.signUp ? 'Novo cadastro' : 'Acesso ao sistema'
     }
   },
-  mounted () {
+  mounted() {
     this.$store.commit('LOGOUT_CURRENT_USER')
     this.$store.commit('CLEAR_PROJECTS')
     this.$store.commit('HIDE_LOADING')

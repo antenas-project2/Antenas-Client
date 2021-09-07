@@ -1,6 +1,7 @@
 <template>
   <div>
     <div v-if="teams.length == 0 && !createTeam">
+      {{ project }}
       <el-alert
         v-if="!$store.getters.isStudent"
         title="Não há equipes cadastradas no momento"
@@ -15,24 +16,28 @@
         prominent
         border="left"
       >
-        <el-button type="text" @click="createTeam = !createTeam">Crie uma equipe</el-button> ou peça para um colega te adicionar em uma.
+        <el-button type="text" @click="createTeam = !createTeam">
+          Crie uma equipe
+        </el-button>
+        ou peça para um colega te adicionar em uma.
       </el-alert>
     </div>
     <div v-else-if="teams.length > 0 && !createTeam">
       <el-collapse v-for="teamInfo in teams" :key="teamInfo.id" value="1">
-        <el-collapse-item :title="teamInfo.name " name="1">
+        <el-collapse-item :title="teamInfo.name" name="1">
           <div class="student-flex-box">
             <div
               v-for="member in teamInfo.studentTeamList"
               :key="member.label"
               :type="member.type"
-              class="team-member member-view"
+              class="d-flex team-member member-view"
             >
+              <Avatar
+                :student="member"
+                style="cursor: pointer;"
+                @click.native="openStudentProfile(member.student)"
+              />
               <div class="student-flex-box">
-                <div>
-                  <div class="member-name" @click="openStudentProfile(member.student)">{{ member.student.name }}</div>
-                  <div class="role-view">{{ formatStudentRoles(member) }}</div>
-                </div>
                 <div v-if="canEdit" class="overlay">
                   <div class="icon" @click="editMember(member)">
                     <i class="el-icon-edit-outline" /> Editar
@@ -53,7 +58,6 @@
               Adicionar novo membro
             </el-button>
           </div>
-          <br><br>
           <div v-if="canEdit">
             <el-form
               ref="form"
@@ -71,7 +75,10 @@
                   @blur="update()"
                 />
               </el-form-item>
-              <el-form-item label="Link de comunicação" prop="communicationLink">
+              <el-form-item
+                label="Link de comunicação"
+                prop="communicationLink"
+              >
                 <el-input
                   v-model="communicationLink"
                   type="text"
@@ -83,15 +90,26 @@
             </el-form>
           </div>
           <div v-else>
-            <strong>Url do projeto: </strong> <el-link type="primary" @click="openUrl(teamInfo.projectUrl)"> {{ teamInfo.projectUrl }} </el-link>
-            <br>
-            <strong>Link de comunicação: </strong> <el-link type="primary" @click="openUrl(teamInfo.communicationLink)"> {{ teamInfo.communicationLink }} </el-link>
+            <strong>Url do projeto: </strong>
+            <el-link type="primary" @click="openUrl(teamInfo.projectUrl)">
+              {{ teamInfo.projectUrl }}
+            </el-link>
+            <br />
+            <strong>Link de comunicação: </strong>
+            <el-link
+              type="primary"
+              @click="openUrl(teamInfo.communicationLink)"
+            >
+              {{ teamInfo.communicationLink }}
+            </el-link>
           </div>
         </el-collapse-item>
       </el-collapse>
       <el-dialog
         v-if="canEdit"
-        :title="editingMember ? 'Editar função do membro' : 'Adicionar novo membro' "
+        :title="
+          editingMember ? 'Editar função do membro' : 'Adicionar novo membro'
+        "
         :visible.sync="addMember"
         width="50%"
         :close-on-click-modal="false"
@@ -106,7 +124,11 @@
           <el-row :gutter="20">
             <el-col :span="16">
               <el-form-item label="Aluno" prop="name">
-                <el-select v-model="newTeamMember" :disabled="editingMember" filterable>
+                <el-select
+                  v-model="newTeamMember"
+                  :disabled="editingMember"
+                  filterable
+                >
                   <el-option
                     v-for="student in students"
                     :key="student.id"
@@ -130,9 +152,7 @@
             </el-col>
           </el-row>
           <div class="justify-end d-flex">
-            <el-button
-              @click="clear()"
-            >
+            <el-button @click="clear()">
               Cancelar
             </el-button>
             <el-button
@@ -185,15 +205,10 @@
           </el-col>
         </el-row>
         <div class="justify-end d-flex">
-          <el-button
-            @click="createTeam = !createTeam"
-          >
+          <el-button @click="createTeam = !createTeam">
             Cancelar
           </el-button>
-          <el-button
-            type="primary"
-            @click="save()"
-          >
+          <el-button type="primary" @click="save()">
             Salvar
           </el-button>
         </div>
@@ -205,9 +220,15 @@
 <script>
 import TeamService from '@/services/TeamService'
 import UserService from '@/services/UserService.js'
+import Avatar from '@/components/Avatar'
+
+import { mapGetters } from 'vuex'
 
 export default {
-  data () {
+  components: {
+    Avatar
+  },
+  data() {
     return {
       teams: [],
       students: [],
@@ -219,23 +240,33 @@ export default {
       newTeamMember: '',
       rolesSelect: [],
       communicationLink: '',
-      projectUrl: '',
-      project: {}
+      projectUrl: ''
     }
   },
   computed: {
-    canEdit () {
+    ...mapGetters({
+      project: 'selectedProject'
+    }),
+    canEdit() {
       return this.$store.getters.isStudent && !this.project.finished
     }
   },
-  created () {
-    this.project = JSON.parse(JSON.stringify(this.$store.getters.selectedProject))
+  watch: {
+    project() {
+      this.getTeam()
+    }
+  },
+  created() {
+    // this.project = JSON.parse(JSON.stringify(this.$store.getters.selectedProject))
+  },
+  mounted() {
+    this.getTeam()
+    console.log('?????')
   },
   methods: {
-    updateTeams () {
+    updateTeams() {
       this.$store.commit('SHOW_LOADING')
-      TeamService
-        .getTeam(this.project.id)
+      TeamService.getTeam(this.project.id)
         .then(teams => {
           this.teams = teams
           if (this.$store.getters.isStudent && this.teams.length) {
@@ -243,7 +274,7 @@ export default {
             this.communicationLink = this.teams[0].communicationLink
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err)
           this.$notify({
             title: 'Ops!',
@@ -254,43 +285,42 @@ export default {
         })
         .finally(() => this.$store.commit('HIDE_LOADING'))
     },
-    getRoles () {
+    getRoles() {
       if (this.$store.getters.isStudent) {
-        TeamService
-          .getRoles()
-          .then(roles => {
-            this.rolesSelect = roles
-          })
+        TeamService.getRoles().then(roles => {
+          this.rolesSelect = roles
+        })
       }
     },
-    getRoleObject () {
+    getRoleObject() {
       const roleList = []
       this.roles.forEach(role => {
         roleList.push({ id: role })
       })
       return roleList
     },
-    save () {
-      TeamService.addTeam(
-        {
-          project: { id: this.project.id },
-          name: this.teamName,
-          roles: this.getRoleObject()
-        }).then(() => {
-        this.$notify({
-          title: 'Equipe criada',
-          message: 'A equipe foi criada com sucesso!',
-          type: 'success',
-          position: 'bottom-right'
-        })
-        this.createTeam = false
-        this.updateTeams()
+    save() {
+      TeamService.addTeam({
+        project: { id: this.project.id },
+        name: this.teamName,
+        roles: this.getRoleObject()
       })
+        .then(() => {
+          this.$notify({
+            title: 'Equipe criada',
+            message: 'A equipe foi criada com sucesso!',
+            type: 'success',
+            position: 'bottom-right'
+          })
+          this.createTeam = false
+          this.updateTeams()
+        })
         .catch(err => {
           if (err.response.status === 409) {
             this.$notify({
               title: 'Você já pertence a uma equipe!',
-              message: 'Para criar uma nova equipe, é necessário sair da outra.',
+              message:
+                'Para criar uma nova equipe, é necessário sair da outra.',
               type: 'error',
               position: 'bottom-right'
             })
@@ -305,9 +335,17 @@ export default {
         })
       this.clear()
     },
-    update () {
-      if (this.projectUrl && this.communicationLink && ((!this.projectUrl.includes('http://') && !this.projectUrl.includes('https://')) || !this.projectUrl ||
-      (!this.communicationLink.includes('http://') && !this.communicationLink.includes('https://')) || !this.communicationLink)) {
+    update() {
+      if (
+        this.projectUrl &&
+        this.communicationLink &&
+        ((!this.projectUrl.includes('http://') &&
+          !this.projectUrl.includes('https://')) ||
+          !this.projectUrl ||
+          (!this.communicationLink.includes('http://') &&
+            !this.communicationLink.includes('https://')) ||
+          !this.communicationLink)
+      ) {
         this.$notify({
           title: 'Ops!',
           message: 'A url deve conter http:// ou https://.',
@@ -331,7 +369,7 @@ export default {
           .then(() => {
             this.updateTeams()
           })
-          .catch((err) => {
+          .catch(err => {
             if (err.response.status === 409) {
               this.$notify({
                 title: 'Ops!',
@@ -351,7 +389,7 @@ export default {
         this.clear()
       }
     },
-    formatStudentRoles (member) {
+    formatStudentRoles(member) {
       let roleString = ''
       member.role.forEach(role => {
         if (roleString.length > 0) {
@@ -361,12 +399,16 @@ export default {
       })
       return roleString
     },
-    removeStudent (student) {
-      this.$confirm(`Tem certeza que deseja remover ${student.student.name} da equipe?`, 'Remover aluno', {
-        confirmButtonText: 'Remover',
-        cancelButtonText: 'Cancelar',
-        confirmButtonClass: 'el-button--danger'
-      }).then(() => {
+    removeStudent(student) {
+      this.$confirm(
+        `Tem certeza que deseja remover ${student.student.name} da equipe?`,
+        'Remover aluno',
+        {
+          confirmButtonText: 'Remover',
+          cancelButtonText: 'Cancelar',
+          confirmButtonClass: 'el-button--danger'
+        }
+      ).then(() => {
         this.$store.commit('SHOW_LOADING')
         TeamService.removeStudent(student.id)
           .then(() => {
@@ -392,16 +434,14 @@ export default {
           })
       })
     },
-    getTeam () {
+    getTeam() {
       this.updateTeams()
-      UserService
-        .getStudentsUsers()
-        .then(students => {
-          this.students = students
-        })
+      UserService.getStudentsUsers().then(students => {
+        this.students = students
+      })
       this.getRoles()
     },
-    editMember (member) {
+    editMember(member) {
       this.editingMember = member
       this.addMember = true
       this.newTeamMember = member.student.name
@@ -409,13 +449,13 @@ export default {
         this.roles.push(item.id)
       })
     },
-    clear () {
+    clear() {
       this.editingMember = null
       this.addMember = false
       this.newTeamMember = ''
       this.roles = []
     },
-    updateRole () {
+    updateRole() {
       this.editingMember.role = this.getRoleObject()
       TeamService.updateStudentTeam(this.editingMember)
         .then(() => {
@@ -437,12 +477,14 @@ export default {
         })
       this.clear()
     },
-    openUrl (url) {
+    openUrl(url) {
       const win = window.open(url, '_blank')
       win.focus()
     },
-    openStudentProfile (student) {
-      this.$router.push(`/${student.name.replace(' ', '.').replace(' ', '')}-${student.id}`)
+    openStudentProfile(student) {
+      this.$router.push(
+        `/${student.name.replace(' ', '.').replace(' ', '')}-${student.id}`
+      )
     }
   }
 }
@@ -467,18 +509,19 @@ export default {
 }
 .team-member {
   background-color: white;
-  border-radius: 50px;
-  padding: 4px 18px;
+  border-radius: 6px;
+  padding: 20px 10px;
+  min-width: 200px;
   margin-right: 10px;
   margin-bottom: 10px;
   border: 1px outset #1c6ea436;
   filter: drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.123));
 }
 .role-view {
-  font-family: Open Sans;
+  // font-family: Open Sans;
   font-size: 14px;
   line-height: 14px;
-  color: #9F9D9D;
+  color: #9f9d9d;
   padding-top: 5px;
 }
 
@@ -492,15 +535,19 @@ export default {
   height: auto;
 }
 .overlay {
-  border-radius: 50px;
+  border-radius: 6px;
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
   opacity: 0;
-  transition: .60s ease;
-  background-color: #00000094
+  transition: 0.6s ease;
+  background-color: #00000094;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 .member-view:hover .overlay {
   opacity: 1;
@@ -517,8 +564,16 @@ export default {
 }
 .member-name {
   color: $--color-text-regular;
+  line-height: 1;
 }
 .el-collapse {
-    border-top: none;
+  border-top: none;
+}
+
+@media (max-width: 680px) {
+  .team-member {
+    margin-right: 0;
+    width: 100%;
+  }
 }
 </style>

@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '@/store'
 
+import decodeToken from 'jwt-decode'
+
 // Pages
 
 const External = () =>
@@ -27,7 +29,7 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'Landing',
+    name: 'landing',
     component: External,
     meta: {
       public: true
@@ -42,7 +44,7 @@ const routes = [
     children: [
       {
         path: '/projects',
-        name: 'Projects',
+        name: 'projects',
         component: Projects,
         meta: {
           public: false
@@ -66,7 +68,7 @@ const routes = [
       },
       {
         path: '/dados-cadastrais',
-        name: 'Dados cadastrais',
+        name: 'registry-data',
         component: RegistrationInfo,
         meta: {
           public: false
@@ -74,7 +76,7 @@ const routes = [
       },
       {
         path: '/:userName-:userId',
-        name: 'Perfil',
+        name: 'profile',
         component: Profile,
         meta: {
           public: false
@@ -89,11 +91,31 @@ const router = new VueRouter({
   routes
 })
 
+const tokenHasBeenExpired = () => {
+  const token = store.getters.userToken
+  const decodedToken = decodeToken(token)
+  const currentTime = new Date().getTime() / 1000
+
+  return currentTime > decodedToken.exp
+}
+
+const logoutUser = () => {
+  store.commit('LOGOUT_CURRENT_USER')
+}
+
 router.beforeEach((to, from, next) => {
-  if (!to.meta.public && !store.getters.isLoggedIn) {
-    return next({ path: '/' })
-  } else if (to.meta.public && store.getters.isLoggedIn) {
-    return next({ path: '/projects' })
+  if (!to.meta.public) {
+    if (tokenHasBeenExpired()) {
+      logoutUser()
+      next({ name: 'landing' })
+    }
+    if (!store.getters.isLoggedIn) {
+      return next({ path: '/' })
+    }
+  } else {
+    if (store.getters.isLoggedIn) {
+      return next({ path: '/projects' })
+    }
   }
   next()
 })

@@ -16,21 +16,21 @@ export default {
     ]
   },
   mutations: {
-    SET_MEDALS (state, medals) {
+    SET_MEDALS(state, medals) {
       state.medals = medals
     },
-    CLEAR_MEDALS (state) {
+    CLEAR_MEDALS(state) {
       state.medals = []
     },
-    UPDATE_MEDAL (state, medal) {
+    UPDATE_MEDAL(state, medal) {
       Vue.set(state.medals, state.medals.findIndex(m => m.id === medal.id), medal)
     },
-    ADD_MEDAL (state, medal) {
+    ADD_MEDAL(state, medal) {
       state.medals.push(medal)
     }
   },
   actions: {
-    loadMedals ({ commit }) {
+    loadMedals({ commit }) {
       return new Promise((resolve, reject) => {
         MedalService
           .getMedals()
@@ -44,7 +44,7 @@ export default {
           })
       })
     },
-    updateMedals ({ commit }, medal) {
+    updateMedals({ commit }, medal) {
       return new Promise((resolve, reject) => {
         MedalService
           .updateMedal(medal)
@@ -57,7 +57,7 @@ export default {
           })
       })
     },
-    saveMedal ({ commit }, medal) {
+    saveMedal({ commit }, medal) {
       return new Promise((resolve, reject) => {
         MedalService
           .saveMedal(medal)
@@ -70,7 +70,7 @@ export default {
           })
       })
     },
-    removeMedal ({ commit }, medal) {
+    removeMedal({ commit }, medal) {
       return new Promise((resolve, reject) => {
         MedalService
           .removeMedal(medal)

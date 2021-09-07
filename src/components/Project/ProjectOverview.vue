@@ -1,5 +1,5 @@
 <template>
-  <el-card v-loading="$store.getters.loading" class="project-overview h100">
+  <div v-loading="$store.getters.loading" class="project-overview w100">
     <div v-if="project">
       <transition name="fade">
         <div v-if="!fade">
@@ -76,29 +76,43 @@
                   </div>
                 </el-collapse-item>
               </el-collapse>
+
+
+              
               <div class="content mt-28 mb-36">
                 <component :is="currentStep" />
               </div>
             </el-tab-pane>
             <el-tab-pane label="Equipe">
+              <!-- TODO: Tem alguma coisa errada aqui nesse TeamView kkk -->
               <TeamView ref="teamView" />
             </el-tab-pane>
           </el-tabs>
         </div>
       </transition>
     </div>
-    <div v-else>
-      <div class="text-center empty h100 d-flex align-center">
+    <div v-else class="h100">
+      <div class="empty d-flex justify-center align-center text-center h100">
         <div>
-          Selecione um projeto ao lado para saber mais<span v-if="!$store.getters.isRepresentative">.</span>
+          <el-empty :image-size="250">
+            <template slot="description">
+              <h1 class="main-message">Nenhum projeto por aqui ainda =/</h1>
+              <h3 class="sub-message">
+                Selecione um para saber mais mais informações<span v-if="!$store.getters.isRepresentative">.</span><br>
+                <span>ou crie o seu agora mesmo.</span>
+              </h3>
+            </template>
+            <el-button v-if="$store.getters.isRepresentative" class="create-project-button" type="primary">Novo projeto</el-button>
+          </el-empty>
+          <!-- Selecione um projeto ao lado para saber mais<span v-if="!$store.getters.isRepresentative">.</span>
           <span v-if="$store.getters.isRepresentative">
             ou
             <el-link type="primary" @click="showProjectModal">crie um novo projeto</el-link>.
-          </span>
+          </span> -->
         </div>
       </div>
     </div>
-  </el-card>
+  </div>
 </template>
 
 <script>
@@ -129,7 +143,7 @@ export default {
     Step8,
     Step9
   },
-  data () {
+  data() {
     return {
       fade: false,
       tabsKey: 0,
@@ -150,18 +164,18 @@ export default {
     ...mapGetters({
       project: 'selectedProject'
     }),
-    openAnotherInfo () {
+    openAnotherInfo() {
       return (this.$store.getters.isCadi || this.$store.getters.isRepresentative) && this.project.progress === 5 ? ['5'] : []
     },
-    currentStep () {
+    currentStep() {
       return 'Step' + this.project.progress
     },
-    showMeetingDetails () {
+    showMeetingDetails() {
       return (this.project && this.project.meeting &&
         (this.project.progress === 5 || this.project.progress === 6) &&
         (this.$store.getters.isCadi || this.$store.getters.isRepresentative))
     },
-    showAddress () {
+    showAddress() {
       return this.project.meeting.address.place && this.project.meeting.address.neighborhood &&
         this.project.meeting.address.neighborhood && this.project.meeting.address.street &&
         this.project.meeting.address.number && this.project.meeting.address.zipCode &&
@@ -169,11 +183,11 @@ export default {
     }
   },
   watch: {
-    project (value) {
+    project(value) {
       this.fade = true
     },
     fade: {
-      handler: debounce(function (newVal) {
+      handler: debounce(function(newVal) {
         if (newVal) this.fade = false
         else setTimeout(() => { this.tabsKey += 1 }, 300)
       }, 200),
@@ -181,12 +195,12 @@ export default {
     }
   },
   methods: {
-    tabClick (tab) {
+    tabClick(tab) {
       if (tab.label === 'Equipe') {
         this.$refs.teamView.getTeam()
       }
     },
-    showProjectModal () {
+    showProjectModal() {
       this.$store.commit('SET_PROJECT_MODAL', true)
     }
   }
@@ -197,14 +211,24 @@ export default {
 @import '@/styles/_colors.scss';
 
 .project-overview {
-  height: calc(100vh - 96px);
+  height: 100vh;
+  width: 100%;
+  border-left: 1px solid $--default-border-color !important;
+  padding: 3%;
+
   .title {
     font-size: 1.8rem;
   }
   .empty {
-    padding: 0 15vw;
-    * {
-      font-size: 2rem;
+    .main-message {
+      color: $--color-text-regular;
+      margin-bottom: 15px;
+    }
+    .sub-message {
+      color: $--color-text-secondary;
+    }
+    .create-project-button {
+      margin-top: 15px;
     }
   }
   // Step

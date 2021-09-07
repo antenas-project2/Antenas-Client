@@ -82,7 +82,7 @@ export default {
   props: {
     user: {
       type: Object,
-      default () {
+      default() {
         return {
           name: '',
           email: '',
@@ -97,7 +97,7 @@ export default {
       }
     }
   },
-  data () {
+  data() {
     const required = [{ required: true, message: 'Campo obrigatório', trigger: 'submit' }]
     return {
       form: {
@@ -118,18 +118,18 @@ export default {
     }
   },
   watch: {
-    user (user) {
+    user(user) {
       if (user.id) this.form = user
     }
   },
   methods: {
-    update () {
+    update() {
       this.$store.commit('SHOW_LOADING')
       UserService.updateUser(this.user)
         .catch(err => this.$throwError(err))
         .finally(() => this.$store.commit('HIDE_LOADING'))
     },
-    changePhoto (file) {
+    changePhoto(file) {
       const isJPG = ['image/jpeg', 'image/png'].includes(file.raw.type)
       const isLt2M = file.raw.size / 1024 / 1024 < 2
       if (!isJPG) this.$message.error('Foto de perfil deve estar no formato JPG ou PNG.')

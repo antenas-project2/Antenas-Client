@@ -2,7 +2,7 @@ import http from '../helpers/Http'
 import store from '@/store'
 
 export default {
-  authenticateUser (credentials) {
+  authenticateUser(credentials) {
     return http.post('/login', {
       email: credentials.email,
       password: credentials.password

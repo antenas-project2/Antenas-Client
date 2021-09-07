@@ -4,7 +4,7 @@ import { Notification } from 'element-ui'
 
 const Utils = {}
 
-Utils.install = function (Vue, options) {
+Utils.install = function(Vue, options) {
   Vue.prototype.$throwError = (err) => {
     let message = 'Houve uma falha de comunicação com o servidor.'
     if (err && err.response && err.response.data) {

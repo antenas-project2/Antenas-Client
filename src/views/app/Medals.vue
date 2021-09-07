@@ -84,7 +84,7 @@ import MedalNew from '@/components/Medal/MedalNew'
 
 export default {
   components: { MedalTemplate, MedalNew },
-  data () {
+  data() {
     return {
       medal: {},
       dialogVisible: false,
@@ -97,12 +97,12 @@ export default {
       'medalsCategories',
       'loading'
     ]),
-    filteredMedals () {
+    filteredMedals() {
       return this.categoryFilter ? this.medals.filter(m => m.category === this.categoryFilter) : this.medals
     }
   },
   methods: {
-    newMedal () {
+    newMedal() {
       this.medal = {
         name: '',
         description: '',
@@ -111,7 +111,7 @@ export default {
       }
       this.dialogVisible = true
     },
-    createMedal () {
+    createMedal() {
       this.$refs.medal.validate(valid => {
         if (valid) {
           this.$store.commit('SHOW_LOADING')
@@ -132,11 +132,11 @@ export default {
         }
       })
     },
-    editMedal (medal) {
+    editMedal(medal) {
       this.medal = { ...medal }
       this.dialogVisible = true
     },
-    removeMedal (medal) {
+    removeMedal(medal) {
       this.$confirm('Tem certeza que deseja excluir?', 'Excluir medalha', {
         confirmButtonText: 'Excluir',
         cancelButtonText: 'Cancelar',
@@ -156,7 +156,7 @@ export default {
           .finally(() => this.$store.commit('HIDE_LOADING'))
       })
     },
-    changePhoto (file) {
+    changePhoto(file) {
       const isJPG = ['image/jpeg', 'image/png'].includes(file.raw.type)
       const isLt2M = file.raw.size / 1024 / 1024 < 2
       if (!isJPG) this.$message.error('Imagem deve estar no formato JPG ou PNG.')

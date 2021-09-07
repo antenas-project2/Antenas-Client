@@ -30,16 +30,16 @@ export default {
     }
   },
   computed: {
-    name () {
+    name() {
       return this.medal.name.toUpperCase()
     },
-    color () {
+    color() {
       return this.medal.color ? this.medal.color : '#4472E9'
     },
-    anglePerChar () {
+    anglePerChar() {
       return (16 * this.name.length) / this.name.length
     },
-    angleOffset () {
+    angleOffset() {
       return 8 * (this.name.length - 1)
     }
   }
@@ -51,7 +51,7 @@ export default {
 
 .medal-template {
   position: relative;
-  display: inline-block;
+  // display: inline-block;
   margin: 6px 6px 40px;
   max-width: 124px;
   text-align: left;
@@ -71,7 +71,7 @@ export default {
     margin-left: 53px;
     span {
       font-weight: 700;
-      font-family: 'Roboto Mono', monospace;
+      // font-family: 'Roboto Mono', monospace;
       font-size: 1.17rem;
       height: 59px;
       position: absolute;
