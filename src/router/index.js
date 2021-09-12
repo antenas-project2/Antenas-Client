@@ -22,7 +22,16 @@ const Medals = () =>
   import(/* webpackChunkName: "medals-view" */ '@/views/app/Medals.vue')
 const Profile = () =>
   import(/* webpackChunkName: "profile" */ '@/views/app/Profile.vue')
-const UserAcceptance = () => import(/* webpackChunkName: "user-acceptance" */ '@/views/app/UserAcceptance.vue')
+const UserAcceptance = () =>
+  import(
+    /* webpackChunkName: "user-acceptance" */ '@/views/app/UserAcceptance.vue'
+  )
+const Explore = () =>
+  import(/* webpackChunkName: "explore" */ '@/views/app/Explore.vue')
+const PublicProfile = () =>
+  import(
+    /* webpackChunkName: "profile-readme" */ '@/views/app/PublicProfile.vue'
+  )
 
 Vue.use(VueRouter)
 
@@ -62,6 +71,22 @@ const routes = [
         path: '/user-acceptance',
         name: 'user-acceptance',
         component: UserAcceptance,
+        meta: {
+          public: false
+        }
+      },
+      {
+        path: '/explore',
+        name: 'explore',
+        component: Explore,
+        meta: {
+          public: false
+        }
+      },
+      {
+        path: '/public-profile/:userId?',
+        name: 'public-profile',
+        component: PublicProfile,
         meta: {
           public: false
         }

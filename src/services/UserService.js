@@ -35,6 +35,11 @@ export default {
       return res.data
     })
   },
+  async getStudent(id) {
+    return http.get(`/user/student/${id}`).then(res => {
+      return res.data
+    })
+  },
   getUserInfo() {
     return http.get('user').then(res => {
       return res.data

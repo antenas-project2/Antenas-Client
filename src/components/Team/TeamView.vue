@@ -94,7 +94,7 @@
             <el-link type="primary" @click="openUrl(teamInfo.projectUrl)">
               {{ teamInfo.projectUrl }}
             </el-link>
-            <br />
+            <br>
             <strong>Link de comunicação: </strong>
             <el-link
               type="primary"

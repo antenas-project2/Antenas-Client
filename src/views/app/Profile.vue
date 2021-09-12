@@ -7,7 +7,7 @@
           class="profile__header__content__image"
           :src="user.photo"
           alt="Foto de perfil"
-        />
+        >
         <i
           v-else
           class="profile__header__content__user-icon el-icon-user"
@@ -56,7 +56,10 @@
       <StudentProfileMedals class="student-medals" :medals="user.medals" />
     </div>
 
-    <div v-if="user && user.studentTeam && user.studentTeam.length > 0" class="profile__projects-information mt-2">
+    <div
+      v-if="user && user.studentTeam && user.studentTeam.length > 0"
+      class="profile__projects-information mt-2"
+    >
       <StudentProjectsInformation :user="user" />
     </div>
   </div>
