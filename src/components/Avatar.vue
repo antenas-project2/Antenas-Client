@@ -5,16 +5,24 @@
       size="medium"
       fit="scale-down"
     >
-      <img v-if="userPhoto" :src="userPhoto" />
+      <img
+        v-if="getUserPhoto"
+        :src="getUserPhoto"
+        class="content-information-img"
+      />
       <span v-else>
-        {{ studentInitials }}
+        {{ userInitials }}
       </span>
     </el-avatar>
     <div
+      v-if="!disableTitle"
       class="avatar-content-information__student-info d-flex flex-column ml-2"
     >
-      <h5 class="student-name">{{ studentName }}dsadsadsadsadsda</h5>
-      <p class="student-information__student-info__position">
+      <h5 class="student-name">{{ studentName }}</h5>
+      <p
+        v-if="student.role && Array.isArray(student.role)"
+        class="student-information__student-info__position"
+      >
         {{ studentRole }}
       </p>
     </div>
@@ -23,8 +31,14 @@
 
 <script>
 export default {
-  props: ['userPhoto', 'student'],
+  props: ['userPhoto', 'student', 'disableTitle'],
   computed: {
+    getUserPhoto() {
+      if (this.userPhoto) {
+        return this.userPhoto
+      }
+      return this.student.student.photo
+    },
     studentName() {
       return this.student?.student.name
     },
@@ -32,17 +46,13 @@ export default {
       const firstRole = this.student?.role[0]
       return firstRole?.name
     },
-    studentInitials() {
+    userInitials() {
       if (this.studentName) {
         const splitedName = this.studentName.split(' ')
-        const firstNameInitial = splitedName[0].charAt(0)
-        const secondNameInitial =
-          splitedName.length > 1
-            ? splitedName[splitedName.length - 1].charAt(0)
-            : ''
-        return `
-            ${firstNameInitial}
-            ${secondNameInitial}`.toUpperCase()
+        return (
+          splitedName[0].charAt(0) +
+          splitedName[splitedName.length - 1].charAt(0)
+        ).toUpperCase()
       }
       return ''
     }
@@ -57,11 +67,16 @@ export default {
   line-height: 1.3;
   max-width: 100%;
   display: flex;
-  justify-content: center;
   align-items: center;
 
   &__avatar {
     min-width: 36px;
+
+    .content-information-img {
+      cursor: pointer;
+      object-fit: cover;
+      width: 100%;
+    }
   }
 
   &__student-info {

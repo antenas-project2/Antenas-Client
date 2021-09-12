@@ -69,7 +69,7 @@ export default {
 @media (max-width: 792px) {
   .projects {
     // Screen minus sidebar width
-    width: calc(100% - 65px);
+    width: calc(100% - 55px);
     position: relative;
     overflow: hidden;
     z-index: 5;

@@ -28,7 +28,23 @@
           class="icon-container d-flex justify-center algin-center"
           @click="goToUsersTablePage()"
         >
-          <box-icon class="sidebar-icon" name="table"></box-icon>
+          <box-icon class="sidebar-icon" name="table" />
+        </div>
+      </el-tooltip>
+    </li>
+    <li>
+      <el-tooltip
+        class="item"
+        effect="dark"
+        content="Descobrir alunos"
+        placement="right-start"
+      >
+        <div
+          :class="{ 'is-active': isExploreSelected }"
+          class="icon-container d-flex justify-center algin-center"
+          @click="goToExplorePage()"
+        >
+          <box-icon class="sidebar-icon" name="compass" />
         </div>
       </el-tooltip>
     </li>
@@ -40,11 +56,11 @@
         placement="right-start"
       >
         <div
-          :class="{ 'is-active': isUsersTableSelected }"
+          :class="{ 'is-active': isUserProfileSelected }"
           class="icon-container d-flex justify-center algin-center"
           @click="goToMyProfile()"
         >
-          <box-icon class="sidebar-icon" name="user"></box-icon>
+          <box-icon class="sidebar-icon" name="user" />
         </div>
       </el-tooltip>
     </li>
@@ -53,15 +69,18 @@
 
 <script>
 export default {
-  mounted() {
-    console.log(this.$route)
-  },
   computed: {
     isProjectTabSelected() {
       return this.$route.name === 'projects'
     },
     isUsersTableSelected() {
-      return this.$route.name === ''
+      return this.$route.name === 'user-acceptance'
+    },
+    isUserProfileSelected() {
+      return this.$route.name === 'profile'
+    },
+    isExploreSelected() {
+      return this.$route.name === 'explore'
     }
   },
   methods: {
@@ -81,6 +100,11 @@ export default {
       if (this.$route.name !== 'user-acceptance') {
         this.$router.push({ name: 'user-acceptance' })
       }
+    },
+    goToExplorePage() {
+      if (this.$route.name !== 'explore') {
+        this.$router.push({ name: 'explore' })
+      }
     }
   }
 }
@@ -90,8 +114,8 @@ export default {
 @import '@/styles/_colors.scss';
 
 .sidebar {
-  min-width: 65px;
-  width: 65px;
+  min-width: 55px;
+  width: 55px;
   background-color: #ffffff;
   transition: all 0.3s;
 
@@ -110,7 +134,7 @@ export default {
 
       &.is-active,
       &:hover {
-        background-color: $--default-hover-color;
+        background-color: $--default-sidebar-hover-color;
       }
 
       .sidebar-icon {

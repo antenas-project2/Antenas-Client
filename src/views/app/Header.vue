@@ -8,7 +8,7 @@
       </div>
       <el-dropdown @command="dropdownClick">
         <el-avatar size="medium" fit="scale-down">
-          <img v-if="userPhoto" :src="userPhoto" class="header__avatar" />
+          <img v-if="userPhoto" :src="userPhoto" class="header__avatar">
           <span v-else>
             {{ userInitials }}
           </span>
@@ -18,37 +18,12 @@
             <i class="el-icon-user" />
             Dados da conta
           </el-dropdown-item>
-          <!--  <el-dropdown-item v-if="$store.getters.isStudent" command="profile">
-            <i class="el-icon-s-custom" />
-            Perfil
-          </el-dropdown-item> -->
           <el-dropdown-item command="logout">
             <i class="el-icon-switch-button" />
             Sair
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <!-- <el-dropdown @command="dropdownClick">
-        <i class="menu el-icon-more" />
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="projects">
-            <i class="el-icon-document" />
-            Projetos
-          </el-dropdown-item>
-          <el-dropdown-item command="account">
-            <i class="el-icon-user" />
-            Dados da conta
-          </el-dropdown-item>
-          <el-dropdown-item v-if="$store.getters.isStudent" command="profile">
-            <i class="el-icon-s-custom" />
-            Perfil
-          </el-dropdown-item>
-          <el-dropdown-item command="logout" divided>
-            <i class="el-icon-switch-button" />
-            Sair
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown> -->
     </div>
   </el-header>
 </template>
@@ -82,6 +57,8 @@ export default {
         this.$store.commit('LOGOUT_CURRENT_USER')
         this.$store.commit('CLEAR_PROJECTS')
         this.$router.push('/')
+      } else if (action === 'account') {
+        this.$router.push({ name: 'registry-data' })
       }
     }
   }

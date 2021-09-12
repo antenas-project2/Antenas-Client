@@ -3,25 +3,19 @@
     <ul class="student-evaluation__container">
       <li class="mb-2">
         <h5 class="text-center m-0">Proatividade</h5>
-        <el-rate class="d-flex justify-center" v-model="proactivity"></el-rate>
+        <el-rate v-model="proactivity" class="d-flex justify-center" />
       </li>
       <li class="mb-2">
         <h5 class="text-center m-0">Autonomia</h5>
-        <el-rate class="d-flex justify-center" v-model="autonomy"></el-rate>
+        <el-rate v-model="autonomy" class="d-flex justify-center" />
       </li>
       <li class="mb-2">
         <h5 class="text-center m-0">Colaboração</h5>
-        <el-rate
-          class="d-flex justify-center"
-          v-model="collaboration"
-        ></el-rate>
+        <el-rate v-model="collaboration" class="d-flex justify-center" />
       </li>
       <li class="mb-2">
         <h5 class="text-center m-0">Entrega de resultados</h5>
-        <el-rate
-          class="d-flex justify-center"
-          v-model="resultsDeliver"
-        ></el-rate>
+        <el-rate v-model="resultsDeliver" class="d-flex justify-center" />
       </li>
     </ul>
 

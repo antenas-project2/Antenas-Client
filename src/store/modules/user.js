@@ -85,6 +85,7 @@ export default {
   getters: {
     userName: (state) => state.name,
     userId: (state) => state.id,
+    userEmail: (state) => state.email,
     userRole: (state) => state.role ? state.role.replace('ROLE_', '').toLowerCase() : undefined,
     userRoleDisplay: (state) => {
       switch (state.role) {
