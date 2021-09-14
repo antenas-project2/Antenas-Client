@@ -118,10 +118,15 @@ const router = new VueRouter({
 
 const tokenHasBeenExpired = () => {
   const token = store.getters.userToken
-  const decodedToken = decodeToken(token)
-  const currentTime = new Date().getTime() / 1000
 
-  return currentTime > decodedToken.exp
+  if (token) {
+    const decodedToken = decodeToken(token)
+    const currentTime = new Date().getTime() / 1000
+
+    return currentTime > decodedToken.exp
+  }
+
+  return true
 }
 
 const logoutUser = () => {
