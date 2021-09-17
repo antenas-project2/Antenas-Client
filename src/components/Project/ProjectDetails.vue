@@ -1,8 +1,8 @@
 <template>
   <div class="project-details w100 h100 small-scroll">
-    <div v-if="project">
+    <div v-if="project" class="h-100">
       <transition name="fade">
-        <div>
+        <div class="h-100">
           <div class="project-details__header">
             <div class="d-flex justify-start align-center">
               <el-button
@@ -15,7 +15,7 @@
             <p class="short-description">{{ project.shortDescription }}</p>
           </div>
 
-          <el-tabs v-model="tabPosition">
+          <el-tabs v-model="tabPosition" class="project-details__tab-container">
             <el-tab-pane label="Projeto">
               <ProjectSteps
                 class="project-steps-visibility"
@@ -50,7 +50,7 @@
                 </el-col>
               </el-row>
             </el-tab-pane>
-            <el-tab-pane label="Equipe">
+            <el-tab-pane label="Equipe" class="project-details-team-tab h-100">
               <TeamView />
             </el-tab-pane>
           </el-tabs>
@@ -313,6 +313,10 @@ export default {
       color: $--color-text-secondary;
       font-size: 0.8rem;
     }
+  }
+
+  &__tab-container {
+    height: calc(100% - 60px);
   }
 
   @media (max-width: 1200px) {

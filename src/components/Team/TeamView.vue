@@ -1,30 +1,53 @@
 <template>
-  <div>
-    <div v-if="teams.length == 0 && !createTeam">
-      {{ project }}
-      <el-alert
-        v-if="!$store.getters.isStudent"
-        title="Não há equipes cadastradas no momento"
-        type="warning"
-        center
-        show-icon
-      />
-      <el-alert
+  <div class="team-container h-100">
+    <div v-if="teams.length == 0 && !createTeam" class="h-100">
+      <div
         v-if="canEdit && teams.length == 0 && !createTeam"
-        center
-        type="warning"
-        prominent
-        border="left"
+        class="d-flex flex-column justify-center align-center h-100 py-4"
       >
-        <el-button type="text" @click="createTeam = !createTeam">
-          Crie uma equipe
-        </el-button>
-        ou peça para um colega te adicionar em uma.
-      </el-alert>
+        <img
+          class="team-container__selecting-team-image"
+          src="@/assets/images/selecting_team.svg"
+        />
+        <h4 class="team-container__selecting-team-description mt-3">
+          <a
+            href="#"
+            class="text-primary"
+            @click="createNewTeamModal = !createNewTeamModal"
+          >
+            Crie uma equipe
+          </a>
+          <span class="text-regular font-weight-500">
+            ou peça para um colega te adicionar em uma. 👍🏼
+          </span>
+        </h4>
+      </div>
+
+      <div
+        v-if="!$store.getters.isStudent"
+        class="d-flex flex-column justify-center align-center h-100"
+      >
+        <img
+          class="team-container__empty-teams-image"
+          src="@/assets/images/empty_teams.svg"
+        />
+        <div
+          class="team-container__empty-teams-description d-flex align-center mt-4"
+        >
+          <h4 class="text-regular font-weight-500">
+            Ainda não há equipes cadastradas no momento! 👍🏼
+          </h4>
+        </div>
+      </div>
     </div>
+
     <div v-else-if="teams.length > 0 && !createTeam">
       <el-collapse v-for="teamInfo in teams" :key="teamInfo.id" value="1">
         <el-collapse-item :title="teamInfo.name" name="1">
+          <template slot="title">
+            <i class="header-icon el-icon-office-building" style="font-size: 14pt;margin-right: 3px;"></i>
+            <h4>{{ teamInfo.name }}</h4>
+          </template>
           <div class="student-flex-box">
             <div
               v-for="member in teamInfo.studentTeamList"
@@ -53,7 +76,7 @@
             <el-button
               icon="el-icon-plus"
               type="text"
-              @click="addMember = !addMember"
+              @click="teamMemberAdditionModal = !teamMemberAdditionModal"
             >
               Adicionar novo membro
             </el-button>
@@ -94,7 +117,7 @@
             <el-link type="primary" @click="openUrl(teamInfo.projectUrl)">
               {{ teamInfo.projectUrl }}
             </el-link>
-            <br>
+            <br />
             <strong>Link de comunicação: </strong>
             <el-link
               type="primary"
@@ -105,115 +128,26 @@
           </div>
         </el-collapse-item>
       </el-collapse>
-      <el-dialog
-        v-if="canEdit"
-        :title="
-          editingMember ? 'Editar função do membro' : 'Adicionar novo membro'
-        "
-        :visible.sync="addMember"
-        width="50%"
-        :close-on-click-modal="false"
-      >
-        <el-form
-          ref="form"
-          v-loading="$store.getters.loading"
-          class="team-form-1"
-          label-position="top"
-          label-width="130px"
-        >
-          <el-row :gutter="20">
-            <el-col :span="16">
-              <el-form-item label="Aluno" prop="name">
-                <el-select
-                  v-model="newTeamMember"
-                  :disabled="editingMember"
-                  filterable
-                >
-                  <el-option
-                    v-for="student in students"
-                    :key="student.id"
-                    :label="`${student.name} (${student.email})`"
-                    :value="student.id"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="Função na equipe" prop="role">
-                <el-select v-model="roles" multiple>
-                  <el-option
-                    v-for="roleList in rolesSelect"
-                    :key="roleList.id"
-                    :label="roleList.name"
-                    :value="roleList.id"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <div class="justify-end d-flex">
-            <el-button @click="clear()">
-              Cancelar
-            </el-button>
-            <el-button
-              :disabled="!roles.length > 0 || !newTeamMember"
-              type="success"
-              @click="editingMember ? updateRole() : update()"
-            >
-              {{ editingMember ? 'Salvar' : 'Adicionar' }}
-            </el-button>
-          </div>
-        </el-form>
-      </el-dialog>
     </div>
-    <el-dialog
+
+    <TeamMemberEditionModal
       v-if="canEdit"
-      title="Criar equipe"
-      :visible.sync="createTeam"
-      width="50%"
-      :close-on-click-modal="false"
-    >
-      <el-form
-        ref="form"
-        v-loading="$store.getters.loading"
-        class="team-form"
-        label-position="top"
-        label-width="130px"
-      >
-        <el-row :gutter="20">
-          <el-col :span="16">
-            <el-form-item label="Nome" prop="name">
-              <el-input
-                v-model="teamName"
-                type="text"
-                maxlength="15"
-                show-word-limit
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="Sua função na equipe" prop="role">
-              <el-select v-model="roles" multiple>
-                <el-option
-                  v-for="roleList in rolesSelect"
-                  :key="roleList.id"
-                  :label="roleList.name"
-                  :value="roleList.id"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <div class="justify-end d-flex">
-          <el-button @click="createTeam = !createTeam">
-            Cancelar
-          </el-button>
-          <el-button type="primary" @click="save()">
-            Salvar
-          </el-button>
-        </div>
-      </el-form>
-    </el-dialog>
+      v-model="teamMemberEditionModal"
+      :editingMember="editingMember"
+      :students="students"
+      :team="teams[0]"
+      @updateTeam="updateTeams"
+      @save="save"
+    />
+    <TeamMemberAdditionModal
+      v-if="canEdit"
+      v-model="teamMemberAdditionModal"
+      :students="students"
+      :team="teams[0]"
+      @updateTeam="updateTeams"
+      @save="save"
+    />
+    <CreateNewTeamModal v-model="createNewTeamModal" @save="save" />
   </div>
 </template>
 
@@ -222,14 +156,24 @@ import TeamService from '@/services/TeamService'
 import UserService from '@/services/UserService.js'
 import Avatar from '@/components/Avatar'
 
+import CreateNewTeamModal from '@/components/Team/CreateNewTeamModal'
+import TeamMemberAdditionModal from '@/components/Team/TeamMemberAdditionModal'
+import TeamMemberEditionModal from '@/components/Team/TeamMemberEditionModal'
+
 import { mapGetters } from 'vuex'
 
 export default {
   components: {
-    Avatar
+    Avatar,
+    CreateNewTeamModal,
+    TeamMemberAdditionModal,
+    TeamMemberEditionModal
   },
   data() {
     return {
+      createNewTeamModal: false,
+      teamMemberAdditionModal: false,
+      teamMemberEditionModal: false,
       teams: [],
       students: [],
       addMember: false,
@@ -254,14 +198,15 @@ export default {
   watch: {
     project() {
       this.getTeam()
+    },
+    teamMemberEditionModal() {
+      if (!this.teamMemberEditionModal) {
+        this.editingMember = null
+      }
     }
-  },
-  created() {
-    // this.project = JSON.parse(JSON.stringify(this.$store.getters.selectedProject))
   },
   mounted() {
     this.getTeam()
-    console.log('?????')
   },
   methods: {
     updateTeams() {
@@ -284,6 +229,8 @@ export default {
           })
         })
         .finally(() => this.$store.commit('HIDE_LOADING'))
+
+      this.editingMember = null
     },
     getRoles() {
       if (this.$store.getters.isStudent) {
@@ -292,18 +239,18 @@ export default {
         })
       }
     },
-    getRoleObject() {
+    getRoleObject(roles) {
       const roleList = []
-      this.roles.forEach(role => {
+      roles.forEach(role => {
         roleList.push({ id: role })
       })
       return roleList
     },
-    save() {
+    save(name, roles) {
       TeamService.addTeam({
         project: { id: this.project.id },
-        name: this.teamName,
-        roles: this.getRoleObject()
+        name: name,
+        roles: this.getRoleObject(roles)
       })
         .then(() => {
           this.$notify({
@@ -312,7 +259,7 @@ export default {
             type: 'success',
             position: 'bottom-right'
           })
-          this.createTeam = false
+          this.createNewTeamModal = false
           this.updateTeams()
         })
         .catch(err => {
@@ -401,7 +348,7 @@ export default {
     },
     removeStudent(student) {
       this.$confirm(
-        `Tem certeza que deseja remover ${student.student.name} da equipe?`,
+        `Tem certeza que deseja remover ${student.student.name} da equipe? (A equipe será excluída com essa ação)`,
         'Remover aluno',
         {
           confirmButtonText: 'Remover',
@@ -442,12 +389,8 @@ export default {
       this.getRoles()
     },
     editMember(member) {
+      this.teamMemberEditionModal = true
       this.editingMember = member
-      this.addMember = true
-      this.newTeamMember = member.student.name
-      member.role.forEach(item => {
-        this.roles.push(item.id)
-      })
     },
     clear() {
       this.editingMember = null
@@ -492,6 +435,60 @@ export default {
 
 <style scoped lang="scss">
 @import '@/styles/_colors.scss';
+
+.team-container {
+  &__selecting-team-image {
+    width: 250px;
+  }
+  &__selecting-team-description {
+    min-width: 400px;
+    text-align: center;
+
+    a {
+      text-decoration: none;
+    }
+  }
+  &__empty-teams-image {
+    width: 250px;
+    padding: 8px 0;
+  }
+  &__empty-teams-description {
+    min-width: 350px;
+    text-align: center;
+
+    h3 {
+      font-weight: 500;
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .team-container {
+    &__selecting-team-image {
+      width: 250px;
+    }
+    &__selecting-team-description {
+      min-width: auto;
+      text-align: center;
+
+      a {
+        text-decoration: none;
+      }
+    }
+    &__empty-teams-image {
+      width: 250px;
+      padding: 10px 0;
+    }
+    &__empty-teams-description {
+      min-width: auto;
+      text-align: center;
+
+      h3 {
+        font-weight: 500;
+      }
+    }
+  }
+}
 
 .el-alert .el-alert__description {
   font-size: 14px;

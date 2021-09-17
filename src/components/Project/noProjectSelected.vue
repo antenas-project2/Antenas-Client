@@ -6,9 +6,15 @@
       <template slot="description">
         <h1 class="main-message">Nenhum projeto por aqui ainda =/</h1>
         <h3 class="sub-message">
-          Selecione um para saber mais informações
-          <span v-if="!$store.getters.isRepresentative">.</span>
-          <span>ou crie o seu agora mesmo.</span>
+          <span v-if="!$store.getters.isRepresentative">
+            Selecione um para saber mais informações.
+          </span>
+          <span v-else>
+            Selecione um para saber mais informações
+          </span>
+          <span v-if="$store.getters.isRepresentative">
+            ou crie o seu agora mesmo.
+          </span>
         </h3>
       </template>
       <el-button
