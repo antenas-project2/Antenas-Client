@@ -18,7 +18,6 @@ export default {
   },
 
   closeProject(project) {
-    console.log('close')
     return http.put('/project/close', project)
       .then(res => res.data)
   },

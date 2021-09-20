@@ -121,7 +121,6 @@ export default {
   },
   methods: {
     submitForm() {
-      console.log('?')
       this.form.telephone = this.form.telephone.replace(' ', '')
       this.form.telephone = this.form.telephone.replace('(', '')
       this.form.telephone = this.form.telephone.replace(')', '')

@@ -145,6 +145,7 @@ export default {
   .new-member-team-modal {
     .overlay {
       overflow: hidden;
+      min-width: 400px;
       width: 400px;
     }
   }

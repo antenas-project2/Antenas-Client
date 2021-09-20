@@ -8,7 +8,7 @@
         <img
           class="team-container__selecting-team-image"
           src="@/assets/images/selecting_team.svg"
-        />
+        >
         <h4 class="team-container__selecting-team-description mt-3">
           <a
             href="#"
@@ -30,7 +30,7 @@
         <img
           class="team-container__empty-teams-image"
           src="@/assets/images/empty_teams.svg"
-        />
+        >
         <div
           class="team-container__empty-teams-description d-flex align-center mt-4"
         >
@@ -45,7 +45,10 @@
       <el-collapse v-for="teamInfo in teams" :key="teamInfo.id" value="1">
         <el-collapse-item :title="teamInfo.name" name="1">
           <template slot="title">
-            <i class="header-icon el-icon-office-building" style="font-size: 14pt;margin-right: 3px;"></i>
+            <i
+              class="header-icon el-icon-office-building"
+              style="font-size: 14pt;margin-right: 3px;"
+            />
             <h4>{{ teamInfo.name }}</h4>
           </template>
           <div class="student-flex-box">
@@ -117,7 +120,7 @@
             <el-link type="primary" @click="openUrl(teamInfo.projectUrl)">
               {{ teamInfo.projectUrl }}
             </el-link>
-            <br />
+            <br>
             <strong>Link de comunicação: </strong>
             <el-link
               type="primary"
@@ -219,8 +222,7 @@ export default {
             this.communicationLink = this.teams[0].communicationLink
           }
         })
-        .catch(err => {
-          console.log(err)
+        .catch(() => {
           this.$notify({
             title: 'Ops!',
             message: 'Ocorreu um erro ao atualizar a equipe.',

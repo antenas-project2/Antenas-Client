@@ -1,159 +1,95 @@
 <template>
   <div class="professional-info">
-    <el-row>
-      <el-col :span="12">
-        <h2>Informações profissionais</h2>
-      </el-col>
-      <el-col :span="12">
-        <div class="d-flex justify-end">
-          <el-button
-            type="primary"
-            icon="el-icon-plus"
-            @click="showDialog = true"
-          >
-            Adicionar
-          </el-button>
+    <div class="d-flex align-center">
+      <h4 class="text-primary w-100">
+        Informações profissionais
+      </h4>
+      <el-button
+        type="primary"
+        class="d-flex justify-center"
+        size="small"
+        @click="professionalAdditionAndEditionModal = true"
+      >
+        <i class="el-icon-plus"></i>
+        <span class="d-sm-none d-md-flex justify-center">Adicionar</span>
+      </el-button>
+    </div>
+
+    <div class="professional-info__table small-scroll">
+      <UserInfoRow
+        v-for="(info, index) in user.professionalInfos"
+        :key="index"
+        :id="info.id"
+        :firstColumn="info.company"
+        :secondColumn="info.role"
+        @edit="edit"
+        @remove="removeProfessionalDetail"
+      >
+        <div class="mt-2">
+          <p class=" font-weight-500 font-9rem">
+            <i class="el-icon-date" />
+            {{ info.start | moment('DD/MM/YYYY') }} -
+            <span v-if="info.end">
+              {{ info.end | moment('DD/MM/YYYY') }}
+            </span>
+            <span v-else>Até o momento</span>
+          </p>
+          <p class="font-9rem mt-1" style="word-break:break-all;">
+            {{ info.activitiesPerformed }}
+          </p>
         </div>
-      </el-col>
-    </el-row>
-    <el-dialog
-      title="Cadastrar empresa"
-      :visible.sync="showDialog"
-      :close-on-click-modal="false"
-    >
-      <el-form
-        ref="form"
-        :model="form"
-        class="login-form"
-        label-position="top"
-        label-width="130px"
-        :rules="rules"
-      >
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="Empresa" prop="company">
-              <el-input
-                v-model="form.company"
-                maxlength="60"
-                show-word-limit
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="Cargo" prop="role">
-              <el-input
-                v-model="form.role"
-                maxlength="20"
-                show-word-limit
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="Data inicial" prop="startDate">
-              <el-date-picker
-                v-model="form.start"
-                format="dd/MM/yyyy"
-                prop="start"
-                type="date"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="Data final" prop="endDate">
-              <el-date-picker
-                v-model="form.end"
-                format="dd/MM/yyyy"
-                prop="end"
-                label="Data de início"
-                type="date"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item label="Atividades realizadas" prop="activitiesPerformed">
-          <el-input
-            v-model="form.activitiesPerformed"
-            type="textarea"
-            :rows="4"
-            maxlength="150"
-            show-word-limit
-          />
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="showDialog = false">
-          Cancelar
-        </el-button>
-        <el-button type="primary" @click="update">
-          Salvar
-        </el-button>
-      </span>
-    </el-dialog>
-    <el-table :data="user.professionalInfos">
-      <el-table-column type="expand">
-        <template slot-scope="props">
-          <p><strong>Atividades exercidas:</strong> {{ props.row.activitiesPerformed }} </p>
-          <p><strong>Data inicial:</strong> {{ props.row.start | moment("DD/MM/YYYY") }} </p>
-          <p><strong>Data final:</strong> {{ props.row.end | moment("DD/MM/YYYY") }}</p>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="Empresa"
-        prop="company"
-      />
-      <el-table-column
-        label="Cargo"
-        prop="role"
-      />
-      <el-table-column
-        align="right"
-      >
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            icon="el-icon-edit"
-            @click="edit(scope.row)"
-          >
-            Editar
-          </el-button>
-          <el-button
-            size="mini"
-            type="danger"
-            icon="el-icon-delete"
-            @click="deleteRow(scope.row)"
-          >
-            Excluir
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+      </UserInfoRow>
+    </div>
+
+    <ProfessionalAdditionAndEditionModal
+      v-model="professionalAdditionAndEditionModal"
+      :company="company"
+      :user="user"
+    />
   </div>
 </template>
 
 <script>
 import UserService from '@/services/UserService.js'
 
+import UserInfoRow from './UserInfoRow'
+import ProfessionalAdditionAndEditionModal from './ProfessionalAdditionAndEditionModal'
+
 export default {
   components: {
+    UserInfoRow,
+    ProfessionalAdditionAndEditionModal
   },
   props: {
     user: {
       type: Object,
       default() {
         return {
-          company: '',
-          activitiesPerformed: '',
-          start: '',
-          end: ''
+          company: {
+            company: '',
+            activitiesPerformed: '',
+            start: '',
+            end: ''
+          }
         }
       }
     }
   },
   data() {
-    const required = [{ required: true, message: 'Campo obrigatório', trigger: 'submit' }]
+    const required = [
+      { required: true, message: 'Campo obrigatório', trigger: 'submit' }
+    ]
     return {
+      professionalAdditionAndEditionModal: false,
+      company: {
+        id: null,
+        company: null,
+        role: null,
+        start: null,
+        end: null,
+        activitiesPerformed: null
+      },
+
       showDialog: false,
       form: {
         id: null,
@@ -174,7 +110,9 @@ export default {
     update() {
       this.$store.commit('SHOW_LOADING')
 
-      const index = this.user.professionalInfos.findIndex(item => item.id === this.form.id)
+      const index = this.user.professionalInfos.findIndex(
+        item => item.id === this.form.id
+      )
 
       if (this.form.company && index === -1) {
         if (!this.user.professionalInfos) {
@@ -206,15 +144,29 @@ export default {
         end: ''
       }
     },
-    deleteRow(row) {
-      this.user.professionalInfos = this.user.professionalInfos.filter(info => {
-        return info !== row
-      })
-      this.update()
+    edit(id) {
+      this.professionalAdditionAndEditionModal = true
+      this.company = this.user.professionalInfos.find(info => info.id === id)
     },
-    edit(row) {
-      this.form = row
-      this.showDialog = true
+    async removeProfessionalDetail(id) {
+      this.user.professionalInfos = this.user.professionalInfos.filter(
+        info => info.id !== id
+      )
+
+      try {
+        await UserService.updateUser(this.user)
+        this.throwAlert('Sucesso!', 'Excluído com sucesso', 'success')
+      } catch {
+        this.throwAlert('Ops', 'Algo de errado aconteceu.', 'error')
+      }
+    },
+    throwAlert(title, msg, type) {
+      this.$notify({
+        title: title,
+        message: msg,
+        type: type,
+        position: 'bottom-right'
+      })
     }
   }
 }
@@ -225,12 +177,25 @@ export default {
 
 .professional-info {
   .el-date-editor {
-      width: 100%;
+    width: 100%;
   }
 
   h2 {
     color: $--color-primary;
     margin-bottom: 30px;
+  }
+
+  &__table {
+    width: 100%;
+    display: block;
+    background-image: linear-gradient(to right, #ffffff, #ffffff),
+      linear-gradient(to right, #ffffff, #ffffff),
+      linear-gradient(to right, #f4f4f4, #ffffff),
+      linear-gradient(to left, #f4f4f4, #ffffff) !important;
+    background-position: left center, right center, left center, right center !important;
+    background-repeat: no-repeat !important;
+    background-size: 20px 100%, 20px 100%, 20px 100%, 20px 100% !important;
+    background-attachment: local, local, scroll, scroll !important;
   }
 }
 </style>

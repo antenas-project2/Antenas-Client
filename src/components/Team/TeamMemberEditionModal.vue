@@ -136,6 +136,7 @@ export default {
     .overlay {
       overflow: hidden;
       width: 400px;
+      min-width: 400px;
     }
   }
 }

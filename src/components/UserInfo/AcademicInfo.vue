@@ -1,135 +1,61 @@
 <template>
   <div class="academic-info">
-    <el-row>
-      <el-col :span="12">
-        <h2>Informações acadêmicas</h2>
-      </el-col>
-      <el-col :span="12">
-        <div class="d-flex justify-end">
-          <el-button
-            type="primary"
-            icon="el-icon-plus"
-            @click="showDialog = true"
-          >
-            Adicionar
-          </el-button>
+    <div class="d-flex align-center">
+      <h4 class="text-primary w-100 mr-2">
+        Informações acadêmicas
+      </h4>
+      <el-button
+        type="primary"
+        class="d-flex justify-center"
+        size="small"
+        @click="academicAdditionAndEditionModal = true"
+      >
+        <i class="el-icon-plus" />
+        <span class="d-sm-none d-md-flex justify-center">Adicionar</span>
+      </el-button>
+    </div>
+
+    <div v-if="user.academicInfos && user.academicInfos.length > 0" class="academic-info__table small-scroll">
+      <UserInfoRow
+        v-for="(info, index) in user.academicInfos"
+        :id="info.id"
+        :key="index"
+        :firstColumn="info.institution"
+        :secondColumn="info.course"
+        @edit="edit"
+        @remove="removeAcademicDetail"
+      >
+        <div class="mt-2">
+          <p class=" font-weight-500 font-9rem">
+            <i class="el-icon-date" />
+            {{ info.start | moment('DD/MM/YYYY') }} -
+            <span v-if="info.end">
+              {{ info.end | moment('DD/MM/YYYY') }}
+            </span>
+            <span v-else>Até o momento</span>
+          </p>
         </div>
-      </el-col>
-    </el-row>
-    <el-dialog
-      title="Cadastrar curso"
-      :visible.sync="showDialog"
-      :close-on-click-modal="false"
-    >
-      <el-form
-        ref="form"
-        :model="form"
-        class="login-form"
-        label-position="top"
-        label-width="130px"
-        :rules="rules"
-      >
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="Instituição" prop="institution">
-              <el-input
-                v-model="form.institution"
-                maxlength="40"
-                show-word-limit
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="Curso" prop="course">
-              <el-input
-                v-model="form.course"
-                maxlength="40"
-                show-word-limit
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="Data inicial" prop="startDate">
-              <el-date-picker
-                v-model="form.start"
-                format="dd/MM/yyyy"
-                prop="start"
-                type="date"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="Data final" prop="endDate">
-              <el-date-picker
-                v-model="form.end"
-                format="dd/MM/yyyy"
-                prop="end"
-                label="Data de início"
-                type="date"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="showDialog = false">
-          Cancelar
-        </el-button>
-        <el-button type="primary" @click="update">
-          Salvar
-        </el-button>
-      </span>
-    </el-dialog>
-    <el-table
-      :data="user.academicInfos"
-      style="width: 100%"
-    >
-      <el-table-column type="expand">
-        <template slot-scope="props">
-          <p><strong>Data inicial:</strong>  {{ props.row.start | moment("DD/MM/YYYY") }}</p>
-          <p><strong>Data final:</strong> {{ props.row.end | moment("DD/MM/YYYY") }}</p>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="Instituição"
-        prop="institution"
-      />
-      <el-table-column
-        label="Curso"
-        prop="course"
-      />
-      <el-table-column
-        align="right"
-      >
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            icon="el-icon-edit"
-            @click="edit(scope.row)"
-          >
-            Editar
-          </el-button>
-          <el-button
-            size="mini"
-            type="danger"
-            icon="el-icon-delete"
-            @click="deleteRow(scope.row)"
-          >
-            Excluir
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+      </UserInfoRow>
+    </div>
+
+    <AcademicAdditionAndEditionModal
+      v-model="academicAdditionAndEditionModal"
+      :academic="academic"
+      :user="user"
+    />
   </div>
 </template>
 
 <script>
 import UserService from '@/services/UserService.js'
 
+import UserInfoRow from './UserInfoRow'
+import AcademicAdditionAndEditionModal from './AcademicAdditionAndEditionModal'
+
 export default {
   components: {
+    UserInfoRow,
+    AcademicAdditionAndEditionModal
   },
   props: {
     user: {
@@ -145,68 +71,42 @@ export default {
     }
   },
   data() {
-    const required = [{ required: true, message: 'Campo obrigatório', trigger: 'submit' }]
     return {
+      academicAdditionAndEditionModal: false,
       showDialog: false,
-      form: {
+      academic: {
         id: null,
         institution: '',
         course: '',
         start: '',
         end: ''
-      },
-      rules: {
-        cominstitutionpany: required,
-        course: required,
-        start: required,
-        end: required
       }
     }
   },
   methods: {
-    update() {
-      this.$store.commit('SHOW_LOADING')
+    edit(id) {
+      this.academicAdditionAndEditionModal = true
+      this.academic = this.user.academicInfos.find(info => info.id === id)
+    },
+    async removeAcademicDetail(id) {
+      this.user.academicInfos = this.user.academicInfos.filter(
+        info => info.id !== id
+      )
 
-      const index = this.user.academicInfos.findIndex(item => item.id === this.form.id)
-      if (this.form.institution && index === -1) {
-        if (!this.user.academicInfos) {
-          this.user.academicInfos = []
-        }
-        this.user.academicInfos.push(this.form)
-        this.showDialog = false
-        this.form = {
-          id: null,
-          institution: '',
-          course: '',
-          start: '',
-          end: ''
-        }
+      try {
+        await UserService.updateUser(this.user)
+        this.throwAlert('Sucesso!', 'Excluído com sucesso', 'success')
+      } catch {
+        this.throwAlert('Ops', 'Algo de errado aconteceu.', 'error')
       }
-
-      UserService.updateUser(this.user)
-        // .then((res) => this.$emit('update:user'))
-        .catch(err => this.$throwError(err))
-        .finally(() => {
-          this.$store.commit('HIDE_LOADING')
-          this.showDialog = false
-          this.form = {
-            id: null,
-            institution: '',
-            course: '',
-            start: '',
-            end: ''
-          }
-        })
     },
-    deleteRow(row) {
-      this.user.academicInfos = this.user.academicInfos.filter(info => {
-        return info !== row
+    throwAlert(title, msg, type) {
+      this.$notify({
+        title: title,
+        message: msg,
+        type: type,
+        position: 'bottom-right'
       })
-      this.update()
-    },
-    edit(row) {
-      this.form = row
-      this.showDialog = true
     }
   }
 }
@@ -217,12 +117,25 @@ export default {
 
 .academic-info {
   .el-date-editor {
-      width: 100%;
+    width: 100%;
   }
 
   h2 {
     color: $--color-primary;
     margin-bottom: 30px;
+  }
+
+  &__table {
+    width: 100%;
+    display: block;
+    background-image: linear-gradient(to right, #ffffff, #ffffff),
+      linear-gradient(to right, #ffffff, #ffffff),
+      linear-gradient(to right, #f4f4f4, #ffffff),
+      linear-gradient(to left, #f4f4f4, #ffffff) !important;
+    background-position: left center, right center, left center, right center !important;
+    background-repeat: no-repeat !important;
+    background-size: 20px 100%, 20px 100%, 20px 100%, 20px 100% !important;
+    background-attachment: local, local, scroll, scroll !important;
   }
 }
 </style>

@@ -10,28 +10,28 @@
       label-width="130px"
     >
       <el-row :gutter="20">
-        <el-col :span="12">
+        <el-col :xs="24" :span="12">
           <el-form-item label="Nome completo" prop="name">
             <el-input v-model="form.name" />
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :xs="24" :span="12">
           <el-form-item label="E-mail" prop="email">
             <el-input v-model="form.email" />
           </el-form-item>
         </el-col>
         <div v-if="$store.getters.isStudent">
-          <el-col :span="5">
+          <el-col :xs="24" :span="12">
             <el-form-item label="RA" prop="ra">
               <el-input v-model="form.ra" v-mask="'#############'" />
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :xs="24" :span="12">
             <el-form-item label="Cidade" prop="city">
               <el-input v-model="form.city" />
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <el-col :xs="24" :span="12">
             <el-form-item label="LinkedIn" prop="LinkedIn">
               <el-input v-model="form.linkedin" />
             </el-form-item>

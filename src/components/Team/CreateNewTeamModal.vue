@@ -94,6 +94,7 @@ export default {
   .create-new-team-modal {
     .overlay {
       overflow: hidden;
+      min-width: 400px;
       width: 400px;
     }
   }
