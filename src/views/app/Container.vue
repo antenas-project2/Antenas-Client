@@ -47,8 +47,8 @@ export default {
   },
   methods: {
     dropdownClick(action) {
-      if (action === 'account' && this.$route.path !== '/dados-cadastrais') {
-        this.$router.push('/dados-cadastrais')
+      if (action === 'account' && this.$route.path !== '/registry-data') {
+        this.$router.push('/registry-data')
       } else if (action === 'logout') {
         this.$store.commit('LOGOUT_CURRENT_USER')
         this.$store.commit('CLEAR_PROJECTS')

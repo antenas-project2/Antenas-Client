@@ -92,7 +92,7 @@ const routes = [
         }
       },
       {
-        path: '/dados-cadastrais',
+        path: '/registry-data',
         name: 'registry-data',
         component: RegistrationInfo,
         meta: {
