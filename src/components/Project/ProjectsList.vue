@@ -118,13 +118,23 @@ export default {
         })
       } else {
         found = this.projects.filter(project => {
-          return this.filterQuery.projectStatus.includes(project.progress)
+          return this.filterQuery.projectStatus.includes(project.progress) || this.filterProjectPerStatus(project)
         })
       }
       return found
     }
   },
   methods: {
+    filterProjectPerStatus(project) {
+      const status = 'refused'
+
+      if (status === 'refused') {
+        return project.refused === true
+      } else if (status === 'approved') {
+        return project.refused === false
+      }
+      return status
+    },
     selectProject(id) {
       this.activeProjectId = id
       this.$emit('selectProject')

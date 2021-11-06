@@ -12,15 +12,7 @@
             <small class="project-description">
               {{ project.shortDescription }}
             </small>
-            <div class="d-flex justify-between align-center">
-              <el-tag
-                :type="getTagTypeByProjectProgress(project.status)"
-                class="project-status-tag"
-                size="small"
-              >
-                {{ project.labelPhase }}
-              </el-tag>
-            </div>
+            <div class="d-flex justify-between align-center"></div>
           </div>
           <b class="project-updatedAt d-flex align-center">
             <box-icon class="calendar" name="calendar-edit" size="xs" />
@@ -32,6 +24,14 @@
           </b>
         </div>
       </div>
+      <el-tag
+        :type="getTagTypeByProjectProgress(project.status)"
+        class="project-status-tag"
+        style="text-overflow: ellipsis;max-width: 220px;overflow: hidden;"
+        size="small"
+      >
+        {{ project.labelPhase }}
+      </el-tag>
     </el-card>
   </div>
 </template>

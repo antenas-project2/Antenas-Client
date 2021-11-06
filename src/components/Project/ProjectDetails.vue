@@ -3,16 +3,22 @@
     <div v-if="project" class="h-100">
       <transition name="fade">
         <div class="h-100">
-          <div class="project-details__header">
-            <div class="d-flex justify-start align-center">
-              <el-button
-                class="back-button"
-                icon="el-icon-back"
-                @click="backToList()"
-              />
-              <h1 class="title">{{ project.title }}</h1>
+          <div class="d-flex justify-end">
+            <el-button @click="reloadSelectedProject()" style="height: 30px;font-size: 1rem;padding: 0 6px" size="mini" icon="el-icon-refresh-right" />
+          </div>
+          <div class="d-flex justify-between">
+            <div class="project-details__header">
+              <div class="d-flex justify-start align-center">
+                <el-button
+                  class="back-button"
+                  icon="el-icon-back"
+                  @click="backToList()"
+                />
+                <h1 class="title">{{ project.title }}</h1>
+              </div>
+              <p class="short-description">{{ project.shortDescription }}</p>
             </div>
-            <p class="short-description">{{ project.shortDescription }}</p>
+
           </div>
 
           <el-tabs v-model="tabPosition" class="project-details__tab-container">
@@ -274,6 +280,9 @@ export default {
     },
     backToList() {
       this.$emit('backToList')
+    },
+    reloadSelectedProject() {
+      this.$store.dispatch('reloadProject', this.project.id)
     }
   }
 }
@@ -287,6 +296,8 @@ export default {
   border-left: 1px solid $--default-border-color !important;
   padding: 16px;
   overflow-y: auto;
+  padding-top: 8px;
+  padding-right: 6px;
 
   .el-tabs__active-bar {
     border-radius: 50px;

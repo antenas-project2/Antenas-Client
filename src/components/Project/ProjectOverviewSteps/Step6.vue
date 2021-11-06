@@ -1,6 +1,25 @@
 <template>
   <div>
-    <div v-if="$store.getters.isCadi" class="project-step-six">
+    <div v-if="project.refused" class="project-step-six">
+      <Danger class="mb-3">
+        Projeto cancelado após reunião presencial
+      </Danger>
+
+      <div class="d-flex">
+        <h6>Motivo:</h6>
+        <span class="refused-reason ml-1">{{ project.reason }}</span>
+      </div>
+    </div>
+    <div v-if="$store.getters.isCadi && !project.refused">
+      <Information class="mb-3">
+        Você ainda pode cancelar o projeto, se quiser. Basta clicar em
+        <a href="#" @click.stop.prevent="cancelProject()">cancelar projeto</a>.
+      </Information>
+    </div>
+    <div
+      v-if="$store.getters.isCadi && !project.refused"
+      class="project-step-six"
+    >
       <h5 class="project-step-six__title">
         Escolha o professor responsável pelo projeto
       </h5>
@@ -40,6 +59,7 @@
                 v-model="form.semester"
                 :min="0"
                 :max="6"
+                :step="1"
                 controls-position="right"
               />
             </el-form-item>
@@ -52,22 +72,32 @@
         </div>
       </el-form>
     </div>
-    <Information v-else>
-      Na etapa de <b>Designar professor</b> o <b>Cadi</b> irá incluir um
-      <b>professor</b> para se responsabilizar pelo projeto e seu devido
-      andamento.
-    </Information>
+    <div v-else>
+      <Information v-if="!project.refused">
+        Na etapa de <b>Designar professor</b> o <b>Cadi</b> irá incluir um
+        <b>professor</b> para se responsabilizar pelo projeto e seu devido
+        andamento.
+      </Information>
+    </div>
   </div>
 </template>
 
 <script>
 import UserService from '@/services/UserService.js'
+import { mapGetters } from 'vuex'
 
 import Information from '@/components/Information'
+import Danger from '@/components/Danger'
 
 export default {
   components: {
-    Information
+    Information,
+    Danger
+  },
+  computed: {
+    ...mapGetters({
+      project: 'selectedProject'
+    })
   },
   data() {
     const required = [
@@ -121,6 +151,33 @@ export default {
             .finally(() => this.$store.commit('HIDE_LOADING'))
         }
       })
+    },
+    cancelProject() {
+      const project = JSON.parse(JSON.stringify(this.project))
+
+      this.$prompt(
+        'Por qual razão deseja cancelar este projeto?',
+        'Cancelamento do projeto',
+        {
+          confirmButtonText: 'Cancelar projeto',
+          cancelButtonText: 'Voltar',
+          confirmButtonClass: 'el-button--danger',
+          inputPattern: /([^\s])/,
+          inputErrorMessage: 'Campo obrigatório'
+        }
+      ).then(({ value }) => {
+        project.refused = true
+        project.reason = value
+
+        this.dispatchUpdate(project)
+      })
+    },
+    dispatchUpdate(project) {
+      this.$store.commit('SHOW_LOADING')
+      this.$store
+        .dispatch('updateProject', project)
+        .catch(err => this.$throwError(err))
+        .finally(() => this.$store.commit('HIDE_LOADING'))
     }
   }
 }
@@ -128,6 +185,11 @@ export default {
 
 <style lang="scss">
 @import '@/styles/_colors.scss';
+
+.refused-reason {
+  font-size: 0.8rem;
+  color: $--color-text-regular;
+}
 
 .project-step-six {
   padding: 12px;

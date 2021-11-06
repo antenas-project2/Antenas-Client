@@ -13,11 +13,37 @@
             Meu perfil público
           </el-button>
         </div>
-        <el-input
-          v-model="search"
-          class="students-seach"
-          placeholder="Quem você está procurando?"
-        />
+        <div class="d-flex filters-header">
+          <el-input
+            v-model="search"
+            class="students-seach"
+            placeholder="Quem você está procurando?"
+          />
+          <!-- @click="openProjectFilters" -->
+          <el-button
+            class="explore-filter-button"
+            type="primary"
+            @click="toggleExploreFilters()"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="15"
+              height="15"
+              stroke-width="2"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+            </svg>
+            Filtros
+          </el-button>
+
+          <ExploreFilters
+            v-model="exploreFiltersVisibility"
+            @changeProjectsAmount="changeProjectsAmount"
+          />
+        </div>
       </div>
       <el-empty v-if="filteredStudents.length === 0" :image-size="90">
         <template slot="description">
@@ -47,15 +73,19 @@ import ExploreTableRow from '@/components/Explore/ExploreTableRow'
 import StudentService from '@/services/StudentService'
 
 import { mapGetters } from 'vuex'
+import ExploreFilters from '../../components/Explore/ExploreFilters.vue'
 
 export default {
   components: {
-    ExploreTableRow
+    ExploreTableRow,
+    ExploreFilters
   },
   data() {
     return {
       students: [],
-      search: null
+      search: null,
+      exploreFiltersVisibility: false,
+      projectsAmount: 0
     }
   },
   computed: {
@@ -65,6 +95,8 @@ export default {
         return this.students.filter(student => {
           const studentName = student.name.toLowerCase()
           const search = this.search.toLowerCase()
+
+          console.log(student)
 
           return studentName.includes(search)
         })
@@ -82,6 +114,12 @@ export default {
     },
     goToMyPublicProfile() {
       this.goToReadmePage(this.userId)
+    },
+    toggleExploreFilters() {
+      this.exploreFiltersVisibility = !this.exploreFiltersVisibility
+    },
+    changeProjectsAmount(projectsAmount) {
+      this.projectsAmount = projectsAmount
     }
   }
 }
@@ -99,9 +137,32 @@ export default {
     h3 {
       font-weight: 500;
     }
-    .students-seach {
+    .filters-header {
       width: 50%;
+      position: relative;
+    }
+    .students-seach {
+      width: 100%;
       margin: auto;
+    }
+    .explore-filter-button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 6px 13px;
+      margin-left: 5px;
+      background-color: rgb(68, 114, 233, 0.15);
+      border: 0;
+      color: $--color-primary;
+
+      span {
+        display: flex;
+        stroke: $--color-primary;
+        justify-content: center;
+      }
+      svg {
+        margin-right: 3px;
+      }
     }
   }
   &__content {
@@ -162,8 +223,16 @@ export default {
 @media (max-width: 750px) {
   .explore {
     &__header {
-      .students-seach {
+      .filters-header {
         width: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      .explore-filter-button {
+        margin-top: 5px;
+        margin-left: 0;
+        padding-top: 11px;
+        padding-bottom: 11px;
       }
     }
   }

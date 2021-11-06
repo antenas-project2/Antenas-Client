@@ -18,7 +18,7 @@
             <el-form-item label="Nome" prop="name">
               <el-input v-model="medal.name" maxlength="15" show-word-limit />
             </el-form-item>
-            <el-form-item label="Nome" prop="name">
+            <el-form-item label="Descrição" prop="description">
               <el-input
                 v-model="medal.description"
                 maxlength="15"

@@ -42,10 +42,7 @@
     </div>
     <div v-else>
       <h2>
-        BOA MERMÃO! <br>
-        ENVIAMO E-MAIL PROCÊ LÁ <br>
-        QUE EMAIL? ESSE, JUMENTO: <i>{{ form.email }}</i><br>
-        VAI MANO!
+        Enviado e-mail para este usuário: {{ form.email }}
       </h2>
       <el-button type="primary" class="w100" @click="$emit('back-to-login')">
         Ir para Login
@@ -132,8 +129,28 @@ export default {
           } else {
             this.$store.commit('SHOW_LOADING')
             this.$store.dispatch('registerUser', this.form)
-              .then(() => this.$router.push('/projects'))
-              .catch(err => this.$throwError(err))
+              .then(() => {
+                let message = ''
+
+                if (this.form.role === 'STUDENT') {
+                  message = 'Cadastrado com sucesso. Peça para algum CADI ou Professor te aceitar na plataforma!'
+                } else {
+                  message = 'Cadastrado com sucesso. Peça para algum CADI te aceitar na plataforma!'
+                }
+
+                this.$notify({
+                  title: 'Pronto!',
+                  message: message,
+                  duration: 6000,
+                  type: 'success',
+                  position: 'bottom-right'
+                })
+                this.$emit('back-to-login')
+              })
+              .catch(err => {
+                console.log('?!!!@#21')
+                this.$throwError(err)
+              })
               .finally(() => this.$store.commit('HIDE_LOADING'))
           }
         }

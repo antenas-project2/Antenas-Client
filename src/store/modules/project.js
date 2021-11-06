@@ -88,6 +88,18 @@ export default {
           })
       })
     },
+    reloadProject({ commit }, projectId) {
+      return new Promise((resolve, reject) => {
+        ProjectService.getProject(projectId)
+          .then(project => {
+            commit('UPDATE_PROJECT', project)
+            resolve()
+          })
+          .catch(err => {
+            reject(err)
+          })
+      })
+    },
     saveProject({ commit }, project) {
       commit('SET_CREATING_PROJECT')
       return new Promise((resolve, reject) => {

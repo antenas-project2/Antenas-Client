@@ -1,50 +1,54 @@
 <template>
   <div class="profile w100 small-scroll">
-    <div class="profile__header d-flex">
-      <div class="profile__header__content d-flex">
-        <img
-          v-if="user.photo !== null"
-          class="profile__header__content__image"
-          :src="user.photo"
-          alt="Foto de perfil"
-        >
-        <i
-          v-else
-          class="profile__header__content__user-icon el-icon-user"
-          alt="Foto de perfil"
-        />
+    <div class="profile__header d-flex justify-between">
+      <div class="d-flex">
+        <div class="profile__header__content d-flex">
+          <img
+            v-if="user.photo !== null"
+            class="profile__header__content__image"
+            :src="user.photo"
+            alt="Foto de perfil"
+          >
+          <i
+            v-else
+            class="profile__header__content__user-icon el-icon-user"
+            alt="Foto de perfil"
+          />
+        </div>
+        <div class="profile__header__personal-info d-flex flex-column ml-2 mt-2">
+          <h2 class="profile__header__personal-info__name mb-2">
+            {{ user.name }}
+          </h2>
+          <div v-if="user.email" class="profile__header__personal-info__email">
+            <i class="el-icon-message" />
+            {{ user.email }}
+          </div>
+          <div
+            v-if="user.linkedin"
+            class="profile__header__personal-info__linkedin"
+          >
+            <i class="el-icon-link" />
+            {{ user.linkedin }}
+          </div>
+          <div class="profile__header__personal-info__city">
+            <i class="el-icon-location-outline" />
+            {{ user.city }}
+          </div>
+          <div class="profile__header__personal-info__completedProjects">
+            <i class="el-icon-trophy" />
+            {{ user.completedProjects }} projetos concluídos
+          </div>
+          <div
+            v-if="user.biography"
+            class="profile__header__personal-info__biography mt-2"
+          >
+            <h6 class="mb-1">Biografia</h6>
+            {{ user.biography }}
+          </div>
+        </div>
       </div>
-      <div class="profile__header__personal-info d-flex flex-column ml-2 mt-2">
-        <h2 class="profile__header__personal-info__name mb-2">
-          {{ user.name }}
-        </h2>
-        <div v-if="user.email" class="profile__header__personal-info__email">
-          <i class="el-icon-message" />
-          {{ user.email }}
-        </div>
-        <div
-          v-if="user.linkedin"
-          class="profile__header__personal-info__linkedin"
-        >
-          <i class="el-icon-link" />
-          {{ user.linkedin }}
-        </div>
-        <div class="profile__header__personal-info__city">
-          <i class="el-icon-location-outline" />
-          {{ user.city }}
-        </div>
-        <div class="profile__header__personal-info__completedProjects">
-          <i class="el-icon-trophy" />
-          {{ user.completedProjects }} projetos concluídos
-        </div>
-        <div
-          v-if="user.biography"
-          class="profile__header__personal-info__biography mt-2"
-        >
-          <h6 class="mb-1">Biografia</h6>
-          {{ user.biography }}
-        </div>
-      </div>
+
+    <el-button style="height: 40px;" type="primary" @click="goToPublicProfile()">Perfil público</el-button>
     </div>
 
     <div class="profile__informations mt-2">
@@ -85,6 +89,11 @@ export default {
   },
   async mounted() {
     this.user = await UserService.getProfileInfo(this.$route.params.userId)
+  },
+  methods: {
+    goToPublicProfile() {
+      this.$router.push({ name: 'public-profile', params: { userId: this.$route.params.userId } })
+    }
   }
 }
 </script>

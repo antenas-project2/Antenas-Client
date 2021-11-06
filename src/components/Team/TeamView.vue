@@ -8,7 +8,7 @@
         <img
           class="team-container__selecting-team-image"
           src="@/assets/images/selecting_team.svg"
-        >
+        />
         <h4 class="team-container__selecting-team-description mt-3">
           <a
             href="#"
@@ -30,7 +30,7 @@
         <img
           class="team-container__empty-teams-image"
           src="@/assets/images/empty_teams.svg"
-        >
+        />
         <div
           class="team-container__empty-teams-description d-flex align-center mt-4"
         >
@@ -58,18 +58,45 @@
               :type="member.type"
               class="d-flex team-member member-view"
             >
-              <Avatar
-                :student="member"
-                style="cursor: pointer;"
-                @click.native="openStudentProfile(member.student)"
-              />
-              <div class="student-flex-box">
-                <div v-if="canEdit" class="overlay">
-                  <div class="icon" @click="editMember(member)">
-                    <i class="el-icon-edit-outline" /> Editar
+              <router-link
+                v-if="!canEdit"
+                :to="
+                  `/${member.student.name.replace(' ', '.').replace(' ', '')}-${
+                    member.student.id
+                  }`
+                "
+                style="text-decoration: none"
+              >
+                <Avatar
+                  :student="member"
+                  style="cursor: pointer;"
+                  @click.native="openStudentProfile(member.student)"
+                />
+                <div class="student-flex-box">
+                  <div v-if="canEdit" class="overlay">
+                    <div class="icon" @click="editMember(member)">
+                      <i class="el-icon-edit-outline" /> Editar
+                    </div>
+                    <div class="icon close" @click="removeStudent(member)">
+                      <i class="el-icon-close" /> Remover
+                    </div>
                   </div>
-                  <div class="icon close" @click="removeStudent(member)">
-                    <i class="el-icon-close" /> Remover
+                </div>
+              </router-link>
+              <div v-else>
+                <Avatar
+                  :student="member"
+                  style="cursor: pointer;"
+                  @click.native="openStudentProfile(member.student)"
+                />
+                <div class="student-flex-box">
+                  <div v-if="canEdit" class="overlay">
+                    <div class="icon" @click="editMember(member)">
+                      <i class="el-icon-edit-outline" /> Editar
+                    </div>
+                    <div class="icon close" @click="removeStudent(member)">
+                      <i class="el-icon-close" /> Remover
+                    </div>
                   </div>
                 </div>
               </div>
@@ -116,18 +143,25 @@
             </el-form>
           </div>
           <div v-else>
-            <strong>Url do projeto: </strong>
-            <el-link type="primary" @click="openUrl(teamInfo.projectUrl)">
+            <strong style="font-weight: 600">Url do projeto: </strong>
+            <el-link
+              v-if="teamInfo.projectUrl"
+              type="primary"
+              @click="openUrl(teamInfo.projectUrl)"
+            >
               {{ teamInfo.projectUrl }}
             </el-link>
-            <br>
-            <strong>Link de comunicação: </strong>
+            <small v-else class="text-danger">Não informado pela equipe</small>
+            <br />
+            <strong style="font-weight: 600">Link de comunicação: </strong>
             <el-link
+              v-if="teamInfo.communicationLink"
               type="primary"
               @click="openUrl(teamInfo.communicationLink)"
             >
               {{ teamInfo.communicationLink }}
             </el-link>
+            <small v-else class="text-danger">Não informado pela equipe</small>
           </div>
         </el-collapse-item>
       </el-collapse>
