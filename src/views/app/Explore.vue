@@ -94,11 +94,12 @@ export default {
       if (this.search) {
         return this.students.filter(student => {
           const studentName = student.name.toLowerCase()
+          const studentDocument = student.ra
           const search = this.search.toLowerCase()
 
-          console.log(student)
-
-          return studentName.includes(search)
+          return (
+            studentName.includes(search) || studentDocument.includes(search)
+          )
         })
       }
 
