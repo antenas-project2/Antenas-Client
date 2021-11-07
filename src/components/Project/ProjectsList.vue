@@ -6,7 +6,15 @@
       <h3>Projetos</h3>
       <div class="d-flex">
         <el-button
+          style="font-size: 1rem"
           class="projects-filter-button"
+          type="primary"
+          size="mini"
+          icon="el-icon-refresh-right"
+          @click="refreshProjects()"
+        />
+        <el-button
+          class="projects-filter-button ml-2"
           type="primary"
           @click="openProjectFilters"
         >
@@ -19,9 +27,7 @@
             stroke-linecap="round"
             stroke-linejoin="round"
           >
-            <polygon
-              points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"
-            />
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
           </svg>
         </el-button>
         <el-button
@@ -118,7 +124,10 @@ export default {
         })
       } else {
         found = this.projects.filter(project => {
-          return this.filterQuery.projectStatus.includes(project.progress) || this.filterProjectPerStatus(project)
+          return (
+            this.filterQuery.projectStatus.includes(project.progress) ||
+            this.filterProjectPerStatus(project)
+          )
         })
       }
       return found
@@ -144,6 +153,9 @@ export default {
     },
     openProjectFilters() {
       this.$store.commit('CHANGE_PROJECT_FILTER_MODAL_VISIBILITY', true)
+    },
+    refreshProjects() {
+      this.$store.dispatch('loadProjects')
     }
   }
 }
@@ -171,6 +183,8 @@ export default {
       align-items: center;
       padding: 6px 7px;
       background-color: rgb(68, 114, 233, 0.15);
+      color: $--color-primary;
+      font-weight: bold;
       border: 0;
 
       span {
