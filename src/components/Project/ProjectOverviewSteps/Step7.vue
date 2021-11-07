@@ -1,5 +1,12 @@
 <template>
   <div>
+    <Information class="mb-3" v-if="$store.getters.isCadi">
+      Você pode redesignar um professor a qualquer momento clicando aqui em
+      <a href="" @click.stop.prevent="openReassignTeacherModal()">
+        redesignar professor </a
+      >.
+    </Information>
+
     <div v-if="$store.getters.isTeacher" class="project-step-seven">
       <div class="project-step-seven__content">
         <div v-if="!project.open" class="d-flex flex-column align-center">
@@ -36,8 +43,6 @@
           </el-button>
         </div>
       </div>
-
-      <StepSevenEditProject v-model="editProjectModalVisibility" />
     </div>
     <div v-else>
       <Information v-if="!project.open">
@@ -52,6 +57,9 @@
         </span>
       </Information>
     </div>
+
+    <StepSevenEditProject v-model="editProjectModalVisibility" />
+    <ReassignTeacher v-model="reassignTeacherModalVisibility" />
   </div>
 </template>
 
@@ -59,17 +67,20 @@
 import { mapGetters } from 'vuex'
 
 import StepSevenEditProject from './StepSevenEditProject'
+import ReassignTeacher from './ReassignTeacher'
 import Information from '@/components/Information'
 
 export default {
   components: {
     StepSevenEditProject,
+    ReassignTeacher,
     Information
   },
   data() {
     return {
       editProject: false,
-      editProjectModalVisibility: false
+      editProjectModalVisibility: false,
+      reassignTeacherModalVisibility: false
     }
   },
   computed: {
@@ -110,6 +121,9 @@ export default {
           this.update(true)
         }
       })
+    },
+    openReassignTeacherModal() {
+      this.reassignTeacherModalVisibility = true
     }
   }
 }

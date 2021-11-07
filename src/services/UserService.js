@@ -46,7 +46,7 @@ export default {
     })
   },
   getTeacherUsers() {
-    return http.get('/teacher').then(res => {
+    return http.get('/teacher/active').then(res => {
       const teachers = res.data
       return teachers.map(teacher => ({
         id: teacher.id,
