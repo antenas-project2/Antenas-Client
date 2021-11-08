@@ -384,7 +384,7 @@ export default {
     },
     removeStudent(student) {
       this.$confirm(
-        `Tem certeza que deseja remover ${student.student.name} da equipe? (A equipe será excluída com essa ação)`,
+        `Tem certeza que deseja remover ${student.student.name} da equipe?`,
         'Remover aluno',
         {
           confirmButtonText: 'Remover',

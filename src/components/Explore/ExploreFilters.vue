@@ -4,21 +4,13 @@
       <h4 class="text-primary mb-3">Filtrar por:</h4>
       <div>
         <div class="mb-3">
-          <p class="font-weight-500 mb-1">Projetos finalizados:</p>
-          <el-input-number
-            class="explore-filters__amount-filters"
-            v-model="projectsAmount"
-            :min="1"
-            :max="1000"
-          />
-        </div>
-        <div class="mb-3">
           <p class="font-weight-500 mb-1">Medalhas:</p>
           <el-input-number
             class="explore-filters__amount-filters"
             v-model="medalsAmount"
             :min="1"
             :max="1000"
+            @input="changeMedalsAmount"
           />
         </div>
       </div>
@@ -41,13 +33,12 @@ export default {
   },
   data() {
     return {
-      projectsAmount: 0,
       medalsAmount: 0
     }
   },
   methods: {
-    changeProjectsAmount() {
-      this.$emit('changeProjectsAmount', this.projectsAmount)
+    changeMedalsAmount() {
+      this.$emit('changeMedalsAmount', this.medalsAmount)
     }
   }
 }

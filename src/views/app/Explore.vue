@@ -4,6 +4,7 @@
       <div class="explore__header d-flex flex-column align-center my-2">
         <div class="d-flex justify-between align-center w-100 mb-2">
           <h3>Explorar</h3>
+          {{ medalsAmount }}
           <el-button
             v-if="$store.getters.isStudent"
             size="mini"
@@ -41,10 +42,16 @@
 
           <ExploreFilters
             v-model="exploreFiltersVisibility"
-            @changeProjectsAmount="changeProjectsAmount"
+            @changeMedalsAmount="changeMedalsAmount"
           />
         </div>
       </div>
+
+      <div class="d-flex align-center">
+        <p class="mr-2">Filtrando por:</p>
+        <el-tag type="success">Medalhas ({{ medalsAmount }})</el-tag>
+      </div>
+
       <el-empty v-if="filteredStudents.length === 0" :image-size="90">
         <template slot="description">
           <h6>Opa, nenhum usuário com esse nome por aqui</h6>
@@ -85,25 +92,39 @@ export default {
       students: [],
       search: null,
       exploreFiltersVisibility: false,
-      projectsAmount: 0
+      medalsAmount: 1
     }
   },
   computed: {
     ...mapGetters(['userId']),
     filteredStudents() {
+      let found = this.students
+
       if (this.search) {
-        return this.students.filter(student => {
+        found = this.students.filter(student => {
           const studentName = student.name.toLowerCase()
           const studentDocument = student.ra
           const search = this.search.toLowerCase()
+
+          console.log(student)
 
           return (
             studentName.includes(search) || studentDocument.includes(search)
           )
         })
+
+        found = found.filter(
+          student => student.medalsAmount === this.medalsAmount
+        )
+
+        return found
+      } else {
+        found = found.filter(
+          student => student.medalsAmount === this.medalsAmount
+        )
       }
 
-      return this.students
+      return found
     }
   },
   async mounted() {
@@ -119,8 +140,9 @@ export default {
     toggleExploreFilters() {
       this.exploreFiltersVisibility = !this.exploreFiltersVisibility
     },
-    changeProjectsAmount(projectsAmount) {
-      this.projectsAmount = projectsAmount
+    changeMedalsAmount(medalsAmount) {
+      console.log('dhusahudsa')
+      this.medalsAmount = medalsAmount
     }
   }
 }
