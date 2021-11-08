@@ -4,7 +4,6 @@
       <div class="explore__header d-flex flex-column align-center my-2">
         <div class="d-flex justify-between align-center w-100 mb-2">
           <h3>Explorar</h3>
-          {{ medalsAmount }}
           <el-button
             v-if="$store.getters.isStudent"
             size="mini"
