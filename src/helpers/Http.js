@@ -1,8 +1,8 @@
 import axios from 'axios'
 import store from '../store/index'
 
-const baseUrl = 'http://localhost:8080'
-// const baseUrl = 'https://antenas-service.azurewebsites.net'
+// const baseUrl = 'http://localhost:8080'
+const baseUrl = 'https://antenas-service.azurewebsites.net'
 
 const http = axios.create({
   baseURL: `${baseUrl}/dev`,
