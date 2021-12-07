@@ -94,7 +94,7 @@ export default {
       students: [],
       search: null,
       exploreFiltersVisibility: false,
-      medalsAmount: 1,
+      medalsAmount: 0,
       loading: false
     }
   },
@@ -108,8 +108,6 @@ export default {
           const studentName = student.name.toLowerCase()
           const studentDocument = student.ra
           const search = this.search.toLowerCase()
-
-          console.log(student)
 
           return (
             studentName.includes(search) || studentDocument.includes(search)
@@ -146,7 +144,6 @@ export default {
       this.exploreFiltersVisibility = !this.exploreFiltersVisibility
     },
     changeMedalsAmount(medalsAmount) {
-      console.log('dhusahudsa')
       this.medalsAmount = medalsAmount
     }
   }

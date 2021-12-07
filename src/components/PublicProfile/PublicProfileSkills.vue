@@ -30,6 +30,7 @@
         <el-tab-pane label="Visualizar perfil">
           <markdown-it-vue
             class="markdown-content px-3"
+            :options="options"
             :content="getMarkdownContent"
           />
         </el-tab-pane>

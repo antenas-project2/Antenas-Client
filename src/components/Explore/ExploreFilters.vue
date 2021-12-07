@@ -8,7 +8,7 @@
           <el-input-number
             class="explore-filters__amount-filters"
             v-model="medalsAmount"
-            :min="1"
+            :min="0"
             :max="1000"
             @input="changeMedalsAmount"
           />

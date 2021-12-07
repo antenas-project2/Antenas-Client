@@ -1,6 +1,7 @@
 <template>
   <div class="profile w100 small-scroll">
-    <div class="profile__header d-flex justify-between">
+    <div v-if="loading" class="w-100 d-flex justify-center align-center" style="height: 200px;">Carregando...</div>
+    <div v-else class="profile__header d-flex justify-between">
       <div class="d-flex">
         <div class="profile__header__content d-flex">
           <img
@@ -84,11 +85,14 @@ export default {
   },
   data() {
     return {
-      user: {}
+      user: {},
+      loading: false
     }
   },
   async mounted() {
+    this.loading = true
     this.user = await UserService.getProfileInfo(this.$route.params.userId)
+    this.loading = false
   },
   methods: {
     goToPublicProfile() {
