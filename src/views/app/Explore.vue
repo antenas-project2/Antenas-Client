@@ -51,7 +51,10 @@
         <el-tag type="success">Medalhas ({{ medalsAmount }})</el-tag>
       </div>
 
-      <el-empty v-if="filteredStudents.length === 0" :image-size="90">
+      <div v-if="loading" class="d-flex justify-center align-center" style="height: 200px;">
+        <h4>Carregando...</h4>
+      </div>
+      <el-empty v-if="!loading && filteredStudents.length === 0" :image-size="90">
         <template slot="description">
           <h6>Opa, nenhum usuário com esse nome por aqui</h6>
         </template>
@@ -91,7 +94,8 @@ export default {
       students: [],
       search: null,
       exploreFiltersVisibility: false,
-      medalsAmount: 1
+      medalsAmount: 1,
+      loading: false
     }
   },
   computed: {
@@ -127,7 +131,9 @@ export default {
     }
   },
   async mounted() {
+    this.loading = true
     this.students = await StudentService.getStudents()
+    this.loading = false
   },
   methods: {
     goToReadmePage(userId) {
