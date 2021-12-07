@@ -55,6 +55,9 @@ export default {
       result: null,
       publicProfile: null,
       options: {
+        markdownIt: {
+          html: true
+        },
         image: {
           hAlign: 'center'
         }
